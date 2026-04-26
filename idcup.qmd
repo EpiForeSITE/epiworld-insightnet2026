@@ -1,0 +1,265 @@
+---
+title: "Measles outbreak simulation in Miami"
+---
+
+::: {.callout-note}
+The original version of this document is part of the ID Cup project and can be found at <https://github.com/EpiForeSITE/idcup>. This version is adapted for the InsightNet 2026 course and may contain edits for clarity or relevance to the course content.
+:::
+
+::: {.callout-caution title="Work in progress"}
+This scenario simulation is a work in progress. We are still reviewing the model, assumptions, and paramters. Please be mindful of this when interpreting the results.
+:::
+
+## Preparing the environment
+
+```{r}
+#| label: loading-libraries
+#| warning: false
+#| message: false
+library(measles)
+library(data.table)
+
+params <- list(
+  city = "Miami",
+  max_pop = 50000,
+  nthreads = 4,
+  seed = 8812,
+  ndays = 60,
+  nsims = 100
+  )
+```
+
+Pulling information about the city and population from the data files. The mixing matrix is based on the POLYMOD survey data, which provides age-based contact patterns for various cities. We will use the mixing matrix corresponding to the specified city in `params$city`. If the city is not found in the available mixing matrices, an error will be raised.
+
+```{r}
+#| label: loading-data
+# Population matrix
+census_age <- fread("data/census_age.csv")[city == params$city]
+population <- 487014
+
+# Mixing matrix (age-based, from POLYMOD survey data)
+mixing_matrices <- readRDS("data/mixing_matrix.rds")[[params$city]]
+
+# Retrieving vaccination rate
+vacc_rate <- 0.881
+```
+
+The total population in the census data `r population`, exceeds the maximum population size (`r params$max_pop`). The population will be scaled down to fit within the specified maximum population size.
+
+```{r}
+#| label: adjusting-population
+N <- min(params$max_pop, sum(population))
+
+census_age[, total := ceiling(total/sum(total) * N)]
+census_age[, vacc_rate := vacc_rate]
+
+N <- sum(census_age$total)
+```
+
+```{r}
+#| label: calibrating-mixing
+calib_scale <- calibrate_mixing_model(
+  contact_matrix = mixing_matrices,
+  target_rep_number = 15,
+  infectious_period_days = 4,
+  transmission_prob = 0.2
+  )
+```
+
+## Baseline scenario
+
+```{r}
+#| label: creating-model
+
+# Finding hospitalization rate for
+# a 10% hospitalization probability
+# P(hosp) = hosp_r / (hosp_r + rec_r)
+#   => hosp_r = P(hosp) (hosp_r + rec_r)
+#             = P(hosp) * hosp_r + P(hosp) * rec_r
+#   => hosp_r = P(hosp) * rec_r / (1 - P(hosp))
+h_rate <- 0.1 * (1 / 3) / (1 - 0.1)
+
+measles_model <- ModelMeaslesMixing(
+  n                            = N,
+  prevalence                   = 1,
+  transmission_rate            = 0.2,
+  vax_efficacy                 = 0.97,
+  contact_matrix               = mixing_matrices * calib_scale,
+  hospitalization_rate         = h_rate,
+  hospitalization_period       = 7,
+  # Intervention parameter
+  quarantine_period            = 14,
+  quarantine_willingness       = 0.9,
+  isolation_willingness        = 0.9,
+  isolation_period             = 4,
+  # Vaccination parameters (this will be replaced)
+  prop_vaccinated              = 0.95,
+  # Contact tracing parameters
+  days_undetected              = 2,
+  contact_tracing_success_rate = 0.8,
+  contact_tracing_days_window  = 4,
+  rash_period                  = 3
+)
+```
+
+
+```{r}
+#| label: adding-entities
+# Adding the entities to the model
+add_entities_from_dataframe(
+  model = measles_model,
+  entities = census_age,
+  col_name = "age_group",
+  col_number = "total",
+  as_proportion = FALSE
+)
+```
+
+For `r params$city`, the vaccination rate is approximately `r sprintf("%.2f", census_age[, sum(total * vacc_rate)/sum(total)] * 100)`%.
+
+```{r}
+#| label: setting-distribution
+# Creating the distribution function
+dist_fun <- distribute_tool_to_entities(
+  prevalence = census_age$vacc_rate,
+  as_proportion = TRUE
+)
+
+# Setting the distribution function
+measles_model |>
+  get_tool(0) |>
+  set_distribution_tool(dist_fun)
+```
+
+For the initial cases, we will use the expected number of active cases based on the reported cases and the sampling approach described above. We will distribute these initial cases randomly across the population.
+
+```{r}
+#| label: distribute-initial-cases
+get_virus(measles_model, 0L) |>
+  set_distribution_virus(
+    distfun = distribute_virus_randomly(
+      prevalence = 2,
+      as_proportion = FALSE
+      )
+  )
+```
+
+We will use 2 initial cases in the simulations, distributed randomly across the population. We can now run the simulations.
+
+```{r}
+#| label: running-simulations
+saver <- make_saver("outbreak_size", "hospitalizations", "transition")
+
+measles_model |>
+  run_multiple(
+    ndays = params$ndays,
+    nsims = params$nsims,
+    seed  = params$seed,
+    saver = saver,
+    nthreads = params$nthreads
+  )
+```
+
+We can check the results of the simulations by summarizing the model:
+
+```{r}
+#| label: checking-simulations
+summary(measles_model)
+```
+
+## Extracting and plotting the results
+
+```{r}
+#| label: extracting-results
+# Extracting the results
+ans <- measles_model |>
+  run_multiple_get_results(
+    freader = data.table::fread
+  )
+
+# Converting into data.table format for convenience
+outbreak_size <- ans$outbreak_size |> as.data.table()
+hospitalizations <- ans$hospitalizations |> as.data.table()
+transition <- ans$transition |> as.data.table()
+```
+
+### Transition
+
+```{r}
+# Preprocessing
+transition
+# To get a starting point
+tmat <- get_transition_probability(measles_model) * 0
+
+# Collapsing the dat
+t_totals <- transition[, .(total = sum(counts)), by = .(from, to)]
+tmat[
+  as.matrix(t_totals[, .(from, to)])
+  ] <- t_totals$total
+
+draw_mermaid_from_matrix(tmat) |> 
+  plot()
+```
+
+### Outbreak size
+
+```{r}
+#| label: plotting-outbreak-size1
+# Aggregating to get the final
+ggplot2::ggplot(
+  outbreak_size,
+  ggplot2::aes(x = date, y = outbreak_size)
+) +
+  ggplot2::geom_point(
+    color = "blue",
+    alpha = 0.2,
+    size = 1.5
+  ) +
+  ggplot2::labs(
+    title = paste("Measles outbreak size in", params$city),
+    subtitle = sprintf(
+      "Mixing model with census data (%i simulations)",
+      params$nsims
+    ),
+    x = "Day",
+    y = "Cases"
+  ) +
+  ggplot2::theme_minimal()
+```
+
+
+```{r}
+#| label: plotting-outbreak-size2
+# Aggregating to get the final
+final_outbreak <- outbreak_size[date == max(date)]
+median_outbreak_size <- median(final_outbreak$outbreak_size)
+
+ggplot2::ggplot(final_outbreak, ggplot2::aes(x = outbreak_size)) +
+  ggplot2::geom_histogram(fill = "steelblue", color = "white") +
+  ggplot2::labs(
+    title = sprintf(
+      "Measles outbreak size in %s (median: %.2f)",
+      params$city,
+      median_outbreak_size
+    ),
+    subtitle = sprintf(
+      "Mixing model with census data (%i simulations)",
+      params$nsims
+    ),
+    x = "Outbreak size",
+    y = "Count"
+  ) +
+  ggplot2::theme_minimal()
+```
+
+We can save the results for further analysis.
+
+```{r}
+#| label: saving-results
+fwrite(outbreak_size, sprintf("%s_outbreak_size.csv", params$city))
+fwrite(hospitalizations, sprintf("%s_hospitalizations.csv", params$city))
+```
+
+## Session info
+
+This document was generated using the `{measles}` R package version `r packageVersion("measles")` and the `{epiworldR}` package version `r packageVersion("epiworldR")` on `r Sys.Date()`. We used R version `r getRversion()`, running on `r Sys.info()[['sysname']]` with `r Sys.info()[['machine']]` architecture.

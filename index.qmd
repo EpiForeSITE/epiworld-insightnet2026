@@ -1,0 +1,88 @@
+---
+title: "epiworld Workshop - InsightNet 2026"
+---
+
+::: {style="width: 70%;margin:auto;"}
+```{r}
+#| warning: false
+#| echo: true
+#| code-fold: true
+#| label: fig-epiworldR
+library(epiworldR)
+
+# Create a model
+mymodel <- ModelSEIRCONN(
+  name = "Nasty virus", 
+  n = 10000, 
+  prevalence = .001, 
+  contact_rate = 4,
+  transmission_rate = .4, 
+  incubation_days = 7, 
+  recovery_rate = 1/7
+) |> verbose_off() 
+
+# Add a second virus
+add_virus(
+  mymodel, 
+  virus(
+    name = "Nasty virus 2",
+    prob_infecting = .5,
+    recovery_rate = .3,
+    ), 
+  proportion = .001
+)
+
+# Rename the model
+set_name(mymodel, mname = "SEIR COVID-19 model")
+
+# Run the model
+set.seed(8383)
+run(mymodel, ndays = 100)
+
+# Plot the model
+# - Set graphical parameters to plot in 2x2 grid
+op <- par(mfrow = c(2, 2), mar = par()$mar * c(1, 1, 1/2, 0))
+# - Plot
+plot(mymodel)
+plot_reproductive_number(mymodel)
+plot_incidence(mymodel)
+plot_generation_time(mymodel)
+# - Restore original graphical parameters
+par(op)
+```
+:::
+
+Welcome to the InsightNet 2026 workshop **Simulating Complex Agent-Based Models with `{epiworldR}`**. 
+
+The [**`{epiworldR}`**](https://uofuepibio.github.io/epiworldR){target="_blank"} R package is a wrapper of the C++ library [`epiworld`](https://github.com/UofUEpi/epiworld){target="_blank"}.
+It provides a fast, highly customizable framework for building network-based transmission/diffusion [agent-based models](https://en.wikipedia.org/wiki/Agent-based_model){target="_blank"} (ABM).
+
+Key features of `{epiworldR}` include:
+
+-   Fast simulation with an average of 30 million agents/model-step/second
+-   Multi-disease models (e.g., competing pathogens, multiple rumors, etc.)
+-   Mutating pathogens
+-   User-defined interventions (events, tools, politices, etc.) that chagne model behavior while it's running
+-   Adapting transmission and recovery rates based on comorbidities
+-   Parallel computing out-of-the-box
+-   Likelihood-Free Markhov chain Monte Carlo (LFMCMC)
+-   Models with an arbitrary number of compartments/states beyond SIR/SEIR.
+
+Additionally, while `{epiworldR}` was built for models of disease transmission, the `{epiworld}` framework is general enough to build models for any type of diffusion process (covered in Part 2a of this workshop).
+
+## Requirements
+
+You can install the required packages for the session using the following code:
+
+```r
+# The measles and epiworldR packages
+install.packages(
+  c('epiworldR', 'measles'),
+  repos = c(
+    'https://uofuepibio.r-universe.dev',
+    'https://cloud.r-project.org'
+))
+
+# Additional packages
+install.packages(c("data.table", "ggplot2", "DiagrammeR"))
+```

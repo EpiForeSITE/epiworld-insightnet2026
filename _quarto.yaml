@@ -1,0 +1,26 @@
+project:
+  type: website
+
+website:
+  title: "epiworldR at InsightNet 2026"
+  repo-subdir: docs
+  repo-url: https://github.com/EpiForeSITE/epiworld-insightnet2026
+  repo-branch: main
+  search: true
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: model-builder.qmd
+        text: Model Builder
+      - href: idcup.qmd
+        text: Measles Outbreak
+    right: 
+      - href: https://github.com/EpiForeSITE/epiworld-insightnet2026
+        text: "GitHub"
+        icon: github
+
+format:
+  html:
+    theme: cosmo
+    toc: true
