@@ -27,6 +27,7 @@ format:
   html:
     theme: cosmo
     toc: true
+    html-math-method: mathml
     mermaid: 
       theme: neutral
     bibliography: references.bib

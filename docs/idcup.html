@@ -58,7 +58,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -182,6 +201,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#outbreak-size" id="toc-outbreak-size" class="nav-link" data-scroll-target="#outbreak-size">Outbreak size</a></li>
   </ul></li>
   <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
     </div>
@@ -248,19 +268,19 @@ Note
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsims =</span> <span class="dv">100</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Pulling information about the city and population from the data files. The mixing matrix is based on the POLYMOD survey data, which provides age-based contact patterns for various cities. We will use the mixing matrix corresponding to the specified city in <code>params$city</code>. If the city is not found in the available mixing matrices, an error will be raised.</p>
+<p>Pulling information about the city and population from the data files. The mixing matrix is based on the EpiStorm <span class="citation" data-cites="litvinovaEpistormMixMappingSocial2025">(<a href="#ref-litvinovaEpistormMixMappingSocial2025" role="doc-biblioref">Litvinova et al. 2025</a>)</span> survey data, which provides age-based contact patterns for various cities. We will use the mixing matrix corresponding to the specified city in <code>params$city</code>. If the city is not found in the available mixing matrices, an error will be raised.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Population matrix</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>census_age <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/census_age.csv"</span>)[city <span class="sc">==</span> params<span class="sc">$</span>city]</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>population <span class="ot">&lt;-</span> <span class="dv">487014</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Mixing matrix (age-based, from POLYMOD survey data)</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>mixing_matrices <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/mixing_matrix.rds"</span>)[[params<span class="sc">$</span>city]]</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Mixing matrix (age-based, from Epistorm survey data)</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>mixing_matrices <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/mixing_matrix.rds"</span>)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieving vaccination rate</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>vacc_rate <span class="ot">&lt;-</span> <span class="fl">0.881</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The total population in the census data 4.87014^{5}, exceeds the maximum population size (5^{4}). The population will be scaled down to fit within the specified maximum population size.</p>
+<p>The total population in the census data 487014, exceeds the maximum population size (50000). The population will be scaled down to fit within the specified maximum population size.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">min</span>(params<span class="sc">$</span>max_pop, <span class="fu">sum</span>(population))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -372,15 +392,15 @@ ________________________________________________________________________________
 SIMULATION STUDY
 
 Name of the model   : Measles with Mixing and Quarantine
-Population size     : 50008
+Population size     : 50007
 Agents' data        : (none)
-Number of entities  : 18
+Number of entities  : 17
 Days (duration)     : 60 (of 60)
 Number of viruses   : 1
 Last run elapsed t  : 0.00s
 Total elapsed t     : 2.00s (100 runs)
-Last run speed      : 43.51 million agents x day / second
-Average run speed   : 140.65 million agents x day / second
+Last run speed      : 44.64 million agents x day / second
+Average run speed   : 139.04 million agents x day / second
 Rewiring            : off
 Last seed used      : 1474663894
 
@@ -412,29 +432,29 @@ Model parameters:
  - Vax efficacy                    : 0.9700
 
 Distribution of the population at time 60:
-  - ( 0) Susceptible             : 50006 -&gt; 49985
+  - ( 0) Susceptible             : 50005 -&gt; 50003
   - ( 1) Latent                  :     2 -&gt; 0
-  - ( 2) Prodromal               :     0 -&gt; 1
+  - ( 2) Prodromal               :     0 -&gt; 0
   - ( 3) Rash                    :     0 -&gt; 0
   - ( 4) Isolated                :     0 -&gt; 0
-  - ( 5) Isolated Recovered      :     0 -&gt; 0
-  - ( 6) Quarantined Latent      :     0 -&gt; 1
-  - ( 7) Quarantined Susceptible :     0 -&gt; 13
+  - ( 5) Isolated Recovered      :     0 -&gt; 1
+  - ( 6) Quarantined Latent      :     0 -&gt; 0
+  - ( 7) Quarantined Susceptible :     0 -&gt; 0
   - ( 8) Quarantined Prodromal   :     0 -&gt; 0
   - ( 9) Quarantined Recovered   :     0 -&gt; 0
   - (10) Hospitalized            :     0 -&gt; 0
-  - (11) Recovered               :     0 -&gt; 8
+  - (11) Recovered               :     0 -&gt; 3
 
 Transition Probabilities:
  - Susceptible              1.00  0.00     -     -     -     -     -  0.00     -     -     -     -
- - Latent                      -  0.89  0.07     -     -     -  0.04     -     -     -     -     -
- - Prodromal                   -     -  0.62  0.38     -     -     -     -     -     -     -     -
- - Rash                        -     -     -  0.18  0.45  0.09     -     -     -     -     -  0.27
- - Isolated                    -     -     -  0.20  0.53  0.13     -     -     -     -     -  0.13
- - Isolated Recovered          -     -     -     -     -  0.60     -     -     -     -     -  0.40
- - Quarantined Latent          -  0.04     -     -     -     -  0.87     -  0.09     -     -     -
- - Quarantined Susceptible  0.06     -     -     -     -     -     -  0.94     -     -     -     -
- - Quarantined Prodromal       -     -     -     -  0.17     -     -     -  0.83     -     -     -
+ - Latent                      -  0.75  0.19     -     -     -  0.06     -     -     -     -     -
+ - Prodromal                   -     -  0.25  0.75     -     -     -     -     -     -     -     -
+ - Rash                        -     -     -     -  0.67     -     -     -     -     -     -  0.33
+ - Isolated                    -     -     -     -  0.50  0.33     -     -     -     -     -  0.17
+ - Isolated Recovered          -     -     -     -     -  0.98     -     -     -     -     -  0.02
+ - Quarantined Latent          -     -     -     -     -     -  0.86     -  0.14     -     -     -
+ - Quarantined Susceptible  0.07     -     -     -     -     -     -  0.93     -     -     -     -
+ - Quarantined Prodromal       -     -     -     -  0.50     -     -     -  0.50     -     -     -
  - Quarantined Recovered       -     -     -     -     -     -     -     -     -     -     -     -
  - Hospitalized                -     -     -     -     -     -     -     -     -     -     -     -
  - Recovered                   -     -     -     -     -     -     -     -     -     -     -  1.00</code></pre>
@@ -461,19 +481,19 @@ Transition Probabilities:
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preprocessing</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>transition</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       sim_num  date        from          to counts
-         &lt;int&gt; &lt;int&gt;      &lt;char&gt;      &lt;char&gt;  &lt;int&gt;
-    1:       1     0 Susceptible Susceptible  50006
-    2:       1     0 Susceptible      Latent      2
-    3:       1     1 Susceptible Susceptible  50006
-    4:       1     1      Latent      Latent      2
-    5:       1     2 Susceptible Susceptible  50006
-   ---                                             
-39834:     100    58   Recovered   Recovered      2
-39835:     100    59 Susceptible Susceptible  50006
-39836:     100    59   Recovered   Recovered      2
-39837:     100    60 Susceptible Susceptible  50006
-39838:     100    60   Recovered   Recovered      2</code></pre>
+<pre><code>       sim_num  date               from                 to counts
+         &lt;int&gt; &lt;int&gt;             &lt;char&gt;             &lt;char&gt;  &lt;int&gt;
+    1:       1     0        Susceptible        Susceptible  50005
+    2:       1     0        Susceptible             Latent      2
+    3:       1     1        Susceptible        Susceptible  50005
+    4:       1     1             Latent             Latent      2
+    5:       1     2        Susceptible        Susceptible  50005
+   ---                                                           
+39894:     100    59 Isolated Recovered Isolated Recovered      2
+39895:     100    59          Recovered          Recovered      1
+39896:     100    60        Susceptible        Susceptible  50004
+39897:     100    60 Isolated Recovered Isolated Recovered      2
+39898:     100    60          Recovered          Recovered      1</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To get a starting point</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>tmat <span class="ot">&lt;-</span> <span class="fu">get_transition_probability</span>(measles_model) <span class="sc">*</span> <span class="dv">0</span></span>
@@ -487,8 +507,8 @@ Transition Probabilities:
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid_from_matrix</span>(tmat) <span class="sc">|&gt;</span> </span>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-c669e71e554215872ec0" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-c669e71e554215872ec0">{"x":{"diagram":"graph TB\n\ts0[Hospitalized]\n\ts1[Isolated]\n\ts2[Isolated Recovered]\n\ts3[Latent]\n\ts4[Prodromal]\n\ts5[Quarantined Latent]\n\ts6[Quarantined Prodromal]\n\ts7[Quarantined Recovered]\n\ts8[Quarantined Susceptible]\n\ts9[Rash]\n\ts10[Recovered]\n\ts11[Susceptible]\n\ts0 -->|156.000000| s10\n\ts1 -->|85.000000| s0\n\ts1 -->|621.000000| s2\n\ts1 -->|385.000000| s9\n\ts1 -->|219.000000| s10\n\ts2 -->|907.000000| s10\n\ts3 -->|1964.000000| s4\n\ts3 -->|824.000000| s5\n\ts3 -->|64.000000| s6\n\ts4 -->|27.000000| s1\n\ts4 -->|90.000000| s6\n\ts4 -->|1671.000000| s9\n\ts5 -->|146.000000| s3\n\ts5 -->|15.000000| s4\n\ts5 -->|462.000000| s6\n\ts6 -->|494.000000| s1\n\ts6 -->|54.000000| s4\n\ts8 -->|2465.000000| s11\n\ts9 -->|104.000000| s0\n\ts9 -->|878.000000| s1\n\ts9 -->|474.000000| s2\n\ts9 -->|472.000000| s10\n\ts11 -->|3666.000000| s3\n\ts11 -->|2.000000| s5\n\ts11 -->|4107.000000| s8\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-e5f50c6c69513378e93e" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-e5f50c6c69513378e93e">{"x":{"diagram":"graph TB\n\ts0[Hospitalized]\n\ts1[Isolated]\n\ts2[Isolated Recovered]\n\ts3[Latent]\n\ts4[Prodromal]\n\ts5[Quarantined Latent]\n\ts6[Quarantined Prodromal]\n\ts7[Quarantined Recovered]\n\ts8[Quarantined Susceptible]\n\ts9[Rash]\n\ts10[Recovered]\n\ts11[Susceptible]\n\ts0 -->|157.000000| s10\n\ts1 -->|83.000000| s0\n\ts1 -->|693.000000| s2\n\ts1 -->|363.000000| s9\n\ts1 -->|212.000000| s10\n\ts2 -->|1021.000000| s10\n\ts3 -->|2185.000000| s4\n\ts3 -->|922.000000| s5\n\ts3 -->|76.000000| s6\n\ts4 -->|27.000000| s1\n\ts4 -->|89.000000| s6\n\ts4 -->|1838.000000| s9\n\ts5 -->|138.000000| s3\n\ts5 -->|9.000000| s4\n\ts5 -->|519.000000| s6\n\ts6 -->|520.000000| s1\n\ts6 -->|73.000000| s4\n\ts8 -->|2635.000000| s11\n\ts9 -->|125.000000| s0\n\ts9 -->|921.000000| s1\n\ts9 -->|538.000000| s2\n\ts9 -->|477.000000| s10\n\ts11 -->|4160.000000| s3\n\ts11 -->|3.000000| s5\n\ts11 -->|4650.000000| s8\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -565,11 +585,19 @@ Transition Probabilities:
 <section id="session-info" class="level2">
 <h2 class="anchored" data-anchor-id="session-info">Session info</h2>
 <p>This document was generated using the <code>{measles}</code> R package version 0.3.1.0 and the <code>{epiworldR}</code> package version 0.15.0.0 on 2026-04-27. We used R version 4.5.3, running on Linux with x86_64 architecture.</p>
+</section>
+<section id="references" class="level2">
+
+
 
 
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-litvinovaEpistormMixMappingSocial2025" class="csl-entry" role="listitem">
+Litvinova, Maria, Shelly Sinclair, Allisandra G. Kummer, et al. 2025. <em>Epistorm-<span>Mix</span>: <span>Mapping Social Contact Patterns</span> for <span>Respiratory Pathogen Spread</span> in the <span>Post-Pandemic United States</span></em>. medRxiv. <a href="https://doi.org/10.1101/2025.11.20.25340662">https://doi.org/10.1101/2025.11.20.25340662</a>.
+</div>
+</div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

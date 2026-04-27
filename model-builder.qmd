@@ -252,9 +252,9 @@ want to allow.
 
 Calibrating ABMs is not straight forward, especially in the case of network-based models (see for instance @huangEndogenousCompetitionUnderrealized2025). Nonetheless, we can still have a nice starting point anchored in theory. One way to approach this is using the basic reproductive number $\mathcal{R}_0$; based on how we parametrize models in `epiworld`, we can write:
 
-```math
+$$
 \mathcal{R}_0 = c\times p_t \times p_r^{-1} \implies c = \mathcal{R}_0 \times p_r \times p_t^{-1}
-```
+$$
 
 Where $c$ is the contact rate, $p_t$ is the transmission probability, and $p_r$ is the recovery probability. So, in the case of our last model, we could say the following: given the transmission rate is 0.01 and recovery is 1/7, if we use an $\mathcal{R}_0 = 2$, then the contact rate should be:
 
