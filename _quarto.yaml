@@ -1,5 +1,6 @@
 project:
   type: website
+  output-dir: docs
 
 website:
   title: "epiworldR at InsightNet 2026"
@@ -11,6 +12,8 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: intro.qmd
+        text: Introduction
       - href: model-builder.qmd
         text: Model Builder
       - href: idcup.qmd
@@ -24,3 +27,6 @@ format:
   html:
     theme: cosmo
     toc: true
+    mermaid: 
+      theme: neutral
+    bibliography: references.bib

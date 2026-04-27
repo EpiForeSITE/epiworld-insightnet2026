@@ -84,5 +84,5 @@ install.packages(
 ))
 
 # Additional packages
-install.packages(c("data.table", "ggplot2", "DiagrammeR"))
+install.packages(c("data.table", "ggplot2", "DiagrammeR", "netplot", "igraph"))
 ```

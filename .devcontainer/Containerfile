@@ -1,15 +1,18 @@
-FROM ghcr.io/rocker-org/devcontainer/r-ver:4.5
+FROM ghcr.io/rocker-org/devcontainer/geospatial:4.5
 
 # Architecture-specific variable (built in Docker BuildKit)
-ARG TARGETARCH
+# ARG TARGETARCH
 
 # Install quarto-cli and the orange-book extension
-RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.35/quarto-1.9.35-linux-${TARGETARCH}.deb && \
+RUN TARGETARCH=amd64 && wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.9.35/quarto-1.9.35-linux-${TARGETARCH}.deb && \
     dpkg -i quarto-1.9.35-linux-${TARGETARCH}.deb && \
     rm quarto-1.9.35-linux-${TARGETARCH}.deb
 
 # Adding R packages
-RUN install2.r --error data.table quarto socialmixr multigroup.vaccine ggplot2 rvest
+RUN install2.r --error data.table quarto socialmixr multigroup.vaccine ggplot2 rvest netplot igraph DiagrammeR
+
+# We need libglpk-dev for this
+RUN apt-get update && apt-get install -y --no-install-recommends libglpk-dev
 
 # Installing the needed R package
 RUN installGithub.r UofUEpiBio/measles

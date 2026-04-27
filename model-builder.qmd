@@ -40,7 +40,7 @@ library(epiworldR)
 
 sir_builder <- Model()
 
-add_param(sir_builder, "Transmission rate", 0.25)
+add_param(sir_builder, "Transmission rate", 0.01)
 add_param(sir_builder, "Recovery rate", 1 / 7)
 ```
 
@@ -90,7 +90,7 @@ flu <- virus(
   name = "Flu",
   prevalence = 0.01,
   as_proportion = TRUE,
-  prob_infecting = 0.25,
+  prob_infecting = 0.01,
   recovery_rate = 1 / 7
 ) |>
   # Associating the virus with the model states
@@ -116,6 +116,14 @@ summary(sir_builder)
 plot_incidence(sir_builder)
 ```
 
+We can even create a plot of the model structure using `draw_mermaid()`:
+
+```{r}
+#| label: transition1
+draw_mermaid(sir_builder, allow_self_transitions = TRUE) |>
+  plot()
+```
+
 This is the full model builder pattern in its simplest form: create an empty
 model, add parameters, add states with their update rules, attach a virus, add
 a population, and run.
@@ -136,7 +144,7 @@ state. In this example, they can recover or die.
 ```{r}
 #| label: seird-builder-setup
 seird_builder <- Model() |>
-  add_param("Transmission rate", 0.25) |>
+  add_param("Transmission rate", 0.01) |>
   add_param("Incubation rate", 1 / 5) |>
   add_param("Recovery rate", 1 / 7) |>
   add_param("Death rate", 0.01)
@@ -194,7 +202,7 @@ virus(
   name = "COVID-19",
   prevalence = 0.01,
   as_proportion = TRUE,
-  prob_infecting = 0.25,
+  prob_infecting = 0.01,
   recovery_rate = 1 / 7,
   prob_death = 0.01
 ) |>
@@ -218,6 +226,15 @@ summary(seird_builder)
 plot_incidence(seird_builder)
 ```
 
+We can also draw the transition matrix:
+
+
+```{r}
+#| label: transition2
+draw_mermaid(seird_builder, allow_self_transitions = TRUE) |>
+  plot()
+```
+
 This reproduces the main SEIRD compartment logic using the model builder
 functions. The key step is the infected-state update:
 
@@ -230,3 +247,26 @@ That single object encodes two possible exits from infection. Once that pattern
 is clear, building other compartment models becomes much easier: add the states
 you need, then give each state an update rule that matches the transitions you
 want to allow.
+
+## A note about calibration
+
+Calibrating ABMs is not straight forward, especially in the case of network-based models (see for instance @huangEndogenousCompetitionUnderrealized2025). Nonetheless, we can still have a nice starting point anchored in theory. One way to approach this is using the basic reproductive number $\mathcal{R}_0$; based on how we parametrize models in `epiworld`, we can write:
+
+```math
+\mathcal{R}_0 = c\times p_t \times p_r^{-1} \implies c = \mathcal{R}_0 \times p_r \times p_t^{-1}
+```
+
+Where $c$ is the contact rate, $p_t$ is the transmission probability, and $p_r$ is the recovery probability. So, in the case of our last model, we could say the following: given the transmission rate is 0.01 and recovery is 1/7, if we use an $\mathcal{R}_0 = 2$, then the contact rate should be:
+
+```{r}
+#| label: calib-crate
+r_0 <- 2
+p_t <- 0.01
+p_r <- 1/7
+
+(c_rate <- r_0 * p_r / p_t)
+```
+
+which, in our network based model, means setting the mean degree to be approximately `r sprintf("%.2f", c_rate)`. As a practical recommendation, I would suggest the user to set a higher contact/degree rate and modify the transmission rate if possible (which would require re-arranging the $\mathcal{R}_0$ equation); otherwise, as the contact rate reduces, the local competition and local depletion of susceptibles effects described in @huangEndogenousCompetitionUnderrealized2025 become apparent. As the contact rate increases, both mixing and network-based models start behaving as compartmental models, which may be desirable in many cases.
+
+## References
