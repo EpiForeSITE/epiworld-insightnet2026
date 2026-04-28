@@ -58,7 +58,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -139,19 +158,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Getting Started</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./model-builder.html"> 
-<span class="menu-text">Model Builder</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./mixing.html"> 
 <span class="menu-text">Full example</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="./idcup.html"> 
-<span class="menu-text">IDCup Measles</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more-examples" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">More examples</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more-examples">    
+        <li>
+    <a class="dropdown-item" href="./idcup.html">
+ <span class="dropdown-text">IDCup Measles</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./model-builder.html">
+ <span class="dropdown-text">Model Builder</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="https://github.com/EpiForeSITE/epiworld-insightnet2026"> <i class="bi bi-github" role="img">
 </i> 
@@ -180,6 +206,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#running-the-simulation" id="toc-running-the-simulation" class="nav-link" data-scroll-target="#running-the-simulation">Running the simulation</a></li>
   <li><a href="#visualizing-the-results" id="toc-visualizing-the-results" class="nav-link" data-scroll-target="#visualizing-the-results">Visualizing the results</a></li>
   </ul></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
 </nav>
     </div>
@@ -258,13 +286,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Although network-based models are faster, they do require identifying a transmission network, which can be a too strong assumption. Instead, mixing models provide a nice approximation that essentially integrates-out the uncertainty about network-based models. In principle, the same could be done with network-based models, but, in order to do so, we would need to embed the graph-generating algorithm in the model, which could increase the computational complexity.</p>
+<p>Although network-based models are faster, they usually assume a known contact network which may not be available. Mixing models provide a nice approximation that essentially integrates-out the uncertainty about network-based models. In principle, the same could be done with network-based models, but, in order to do so, we would need to embed the graph-generating algorithm in the model, which could increase the computational complexity.</p>
 </div>
 </div>
 </section>
 <section id="dynamics" class="level2">
 <h2 class="anchored" data-anchor-id="dynamics">Dynamics</h2>
-<p><code>epiworld</code> is a discrete-time ABM, meaning that, instead of handling a queue of updates and events, it collects updates from a single step and applies them at the end of it. For the user, this simply means that changes in the system that were triggered in time <code>t</code> will be reflected in time <code>t + 1</code>. Each run of epiworld is characterized by the following sequence:</p>
+<p><code>epiworld</code> is a discrete-time ABM, meaning that, instead of handling a queue of updates and events, it collects updates from a single step and applies them at the end of it. For the user, this simply means that changes in the system that were triggered in time <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math> will be reflected in time <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t + 1</annotation></semantics></math>. Each run of epiworld is characterized by the following sequence:</p>
 <ol type="1">
 <li><p><strong>Reset</strong> the model to its initial state: clear the database, reset the agents, and reset the entities.</p></li>
 <li><p><strong>Distribute</strong> agents to entities, viruses to agents, and tools to agents. Each call finalizes with <code>run_events()</code>.</p></li>
@@ -279,7 +307,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The funcrtions <code>set_virus()</code>, <code>add_tool()</code>, <code>add_entity()</code> or <code>update_state()</code> are not effective until <code>run_events()</code> is called. Since epiworld is discrete-time, changes must be applied simultaneously.</p>
+<p>The functions <code>set_virus()</code>, <code>add_tool()</code>, <code>add_entity()</code> or <code>update_state()</code> are not effective until <code>run_events()</code> is called. Since epiworld is discrete-time, changes must be applied simultaneously.</p>
 </div>
 </div>
 <ol start="3" type="1">
@@ -343,8 +371,8 @@ Agents' data        : (none)
 Number of entities  : 0
 Days (duration)     : 365 (of 365)
 Number of viruses   : 1
-Last run elapsed t  : 10.00ms
-Last run speed      : 35.40 million agents x day / second
+Last run elapsed t  : 14.00ms
+Last run speed      : 25.42 million agents x day / second
 Rewiring            : off
 Last seed used      : 1912
 
@@ -453,13 +481,61 @@ Transition Probabilities:
 </div>
 </div>
 </div>
+</section>
+</section>
+<section id="exercises" class="level2">
+<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<ol type="1">
+<li><em>Basic model</em>. Look for the <code>ModelSEIRCONN()</code> and create an Agent-Based model featuring 10,000 agents. Run a simulation with the following characteristics: (a) has a virus with 1 initial case, (b) has a transmission rate of 0.1 with a reproductive number of 2 (so you need to figure out the contact rate), (c) runs for 50 days.</li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled" title="Simple ABM calibration">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Simple ABM calibration
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the case of a simple ABM (based on a fixed contact and transmission rate), we can use the following equation to calibrate our models:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ℛ</mi><mn>0</mn></msub><mo>=</mo><msub><mi>p</mi><mi>t</mi></msub><mo>×</mo><mi>c</mi><mi>/</mi><msub><mi>p</mi><mi>r</mi></msub><mo>⟹</mo><mi>c</mi><mo>=</mo><msub><mi>ℛ</mi><mn>0</mn></msub><mo>×</mo><msub><mi>p</mi><mi>r</mi></msub><mi>/</mi><msub><mi>p</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">
+\mathcal{R}_0 = p_t \times c / p_r \implies c = \mathcal{R}_0 \times p_r / p_t
+</annotation></semantics></math></p>
+<p>Where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math> is the contact rate, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>r</mi></msub><annotation encoding="application/x-tex">p_r</annotation></semantics></math> is the recovery rate, and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>t</mi></msub><annotation encoding="application/x-tex">p_t</annotation></semantics></math> is the transmission rate.</p>
+</div>
+</div>
+<ol start="2" type="1">
+<li><p><em>Multiple runs</em>. Look at the documentation of <code>run_multiple()</code> and (a) create a saver that extracts the outbreak size, (b) execute the model for the same 50 days, and (c) exctract the saved outbreak size and plot the distribution.</p></li>
+<li><p><em>A network model</em>. Using the <code>ModelSEIR()</code> function, (a) create a version of the model using a network instead (you can use the small-world network), (b) replicate the <code>run_multiple()</code> exercise. and (d) compare the distribution with and without network</p></li>
+</ol>
+<div class="callout callout-style-default callout-tip callout-titled" title="Calibration of Network Models">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Calibration of Network Models
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Calibrating network-based models is not a simple task. The traditional sense of the basic reproductive number is somewhat misleading in network-based models overestimating the quantity (see <span class="citation" data-cites="huangEndogenousCompetitionUnderrealized2025">Huang et al. (<a href="#ref-huangEndogenousCompetitionUnderrealized2025" role="doc-biblioref">2025</a>)</span>). Nonetheless, for the moment, it will still give you a good starting point.</p>
+</div>
+</div>
+</section>
+<section id="references" class="level2">
+
+
 
 
 </section>
-</section>
 
 
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-huangEndogenousCompetitionUnderrealized2025" class="csl-entry" role="listitem">
+Huang, Peng, Zack W. Almquist, and Carter T. Butts. 2025. <span>“Endogenous Competition and the Underrealized Reproduction of Infectious Diseases.”</span> <em>Proceedings of the National Academy of Sciences</em> 122 (23): e2502676122. <a href="https://doi.org/10.1073/pnas.2502676122">https://doi.org/10.1073/pnas.2502676122</a>.
+</div>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
 <li id="fn1"><p>At some point in time, <code>epiworld</code> supported agents beign infected with multiple viruses at once. Nonetheless, although an interesting feature, it was computationally expensive. Thus, we decided to simplify the tool and feature a single virus per agent.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>

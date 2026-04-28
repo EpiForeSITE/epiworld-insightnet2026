@@ -163,19 +163,26 @@ div.csl-indent {
 <span class="menu-text">Getting Started</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./model-builder.html"> 
-<span class="menu-text">Model Builder</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./mixing.html"> 
 <span class="menu-text">Full example</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item">
-    <a class="nav-link active" href="./idcup.html" aria-current="page"> 
-<span class="menu-text">IDCup Measles</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more-examples" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">More examples</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more-examples">    
+        <li>
+    <a class="dropdown-item" href="./idcup.html">
+ <span class="dropdown-text">IDCup Measles</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./model-builder.html">
+ <span class="dropdown-text">Model Builder</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="https://github.com/EpiForeSITE/epiworld-insightnet2026"> <i class="bi bi-github" role="img">
 </i> 
@@ -409,10 +416,10 @@ Agents' data        : (none)
 Number of entities  : 17
 Days (duration)     : 60 (of 60)
 Number of viruses   : 1
-Last run elapsed t  : 9.00ms
-Total elapsed t     : 75.00ms (20 runs)
-Last run speed      : 65.08 million agents x day / second
-Average run speed   : 158.51 million agents x day / second
+Last run elapsed t  : 12.00ms
+Total elapsed t     : 97.00ms (20 runs)
+Last run speed      : 48.97 million agents x day / second
+Average run speed   : 122.62 million agents x day / second
 Rewiring            : off
 Last seed used      : 432123442
 
@@ -519,8 +526,8 @@ Transition Probabilities:
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid_from_matrix</span>(tmat) <span class="sc">|&gt;</span> </span>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-01c496561980810fcb7d" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-01c496561980810fcb7d">{"x":{"diagram":"graph TB\n\ts0[Hospitalized]\n\ts1[Isolated]\n\ts2[Isolated Recovered]\n\ts3[Latent]\n\ts4[Prodromal]\n\ts5[Quarantined Latent]\n\ts6[Quarantined Prodromal]\n\ts7[Quarantined Recovered]\n\ts8[Quarantined Susceptible]\n\ts9[Rash]\n\ts10[Recovered]\n\ts11[Susceptible]\n\ts0 -->|23.000000| s10\n\ts1 -->|15.000000| s0\n\ts1 -->|72.000000| s2\n\ts1 -->|52.000000| s9\n\ts1 -->|32.000000| s10\n\ts2 -->|108.000000| s10\n\ts3 -->|287.000000| s4\n\ts3 -->|99.000000| s5\n\ts3 -->|12.000000| s6\n\ts4 -->|5.000000| s1\n\ts4 -->|17.000000| s6\n\ts4 -->|239.000000| s9\n\ts5 -->|19.000000| s3\n\ts5 -->|2.000000| s4\n\ts5 -->|45.000000| s6\n\ts6 -->|56.000000| s1\n\ts6 -->|9.000000| s4\n\ts8 -->|282.000000| s11\n\ts9 -->|14.000000| s0\n\ts9 -->|126.000000| s1\n\ts9 -->|67.000000| s2\n\ts9 -->|66.000000| s10\n\ts11 -->|512.000000| s3\n\ts11 -->|532.000000| s8\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-eb1a8512893103cd213c" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-eb1a8512893103cd213c">{"x":{"diagram":"graph TB\n\ts0[Hospitalized]\n\ts1[Isolated]\n\ts2[Isolated Recovered]\n\ts3[Latent]\n\ts4[Prodromal]\n\ts5[Quarantined Latent]\n\ts6[Quarantined Prodromal]\n\ts7[Quarantined Recovered]\n\ts8[Quarantined Susceptible]\n\ts9[Rash]\n\ts10[Recovered]\n\ts11[Susceptible]\n\ts0 -->|23.000000| s10\n\ts1 -->|15.000000| s0\n\ts1 -->|72.000000| s2\n\ts1 -->|52.000000| s9\n\ts1 -->|32.000000| s10\n\ts2 -->|108.000000| s10\n\ts3 -->|287.000000| s4\n\ts3 -->|99.000000| s5\n\ts3 -->|12.000000| s6\n\ts4 -->|5.000000| s1\n\ts4 -->|17.000000| s6\n\ts4 -->|239.000000| s9\n\ts5 -->|19.000000| s3\n\ts5 -->|2.000000| s4\n\ts5 -->|45.000000| s6\n\ts6 -->|56.000000| s1\n\ts6 -->|9.000000| s4\n\ts8 -->|282.000000| s11\n\ts9 -->|14.000000| s0\n\ts9 -->|126.000000| s1\n\ts9 -->|67.000000| s2\n\ts9 -->|66.000000| s10\n\ts11 -->|512.000000| s3\n\ts11 -->|532.000000| s8\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>

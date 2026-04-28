@@ -45,19 +45,19 @@ From the figure, we can hihghlight a few things. First, all classes instances li
 The library features two types of contact dynamics: network-based interaction and mixing models. In the network based interaction--the fastest models in `epiworld`--transmission takes place through a pre-defined network. In the case of mixing models, agents are organized in `Entity`(ies) which determines group-level interaction. Mixing models bridge ABMs with compartmental models, providing an approximation that does not require specifying a network structure.
 
 ::: {.callout-tip title="Network vs Mixing models"}
-Although network-based models are faster, they do require identifying a transmission network, which can be a too strong assumption. Instead, mixing models provide a nice approximation that essentially integrates-out the uncertainty about network-based models. In principle, the same could be done with network-based models, but, in order to do so, we would need to embed the graph-generating algorithm in the model, which could increase the computational complexity.
+Although network-based models are faster, they usually assume a known contact network which may not be available. Mixing models provide a nice approximation that essentially integrates-out the uncertainty about network-based models. In principle, the same could be done with network-based models, but, in order to do so, we would need to embed the graph-generating algorithm in the model, which could increase the computational complexity.
 :::
 
 ## Dynamics
 
-`epiworld` is a discrete-time ABM, meaning that, instead of handling a queue of updates and events, it collects updates from a single step and applies them at the end of it. For the user, this simply means that changes in the system that were triggered in time `t` will be reflected in time `t + 1`. Each run of epiworld is characterized by the following sequence:
+`epiworld` is a discrete-time ABM, meaning that, instead of handling a queue of updates and events, it collects updates from a single step and applies them at the end of it. For the user, this simply means that changes in the system that were triggered in time $t$ will be reflected in time $t + 1$. Each run of epiworld is characterized by the following sequence:
 
 1. **Reset** the model to its initial state: clear the database, reset the agents, and reset the entities.
 
 2. **Distribute** agents to entities, viruses to agents, and tools to agents. Each call finalizes with `run_events()`.
 
 ::: {.callout-note title="Locking changes"}
-The funcrtions `set_virus()`, `add_tool()`, `add_entity()` or `update_state()` are not effective until `run_events()` is called. Since epiworld is discrete-time, changes must be applied simultaneously.
+The functions `set_virus()`, `add_tool()`, `add_entity()` or `update_state()` are not effective until `run_events()` is called. Since epiworld is discrete-time, changes must be applied simultaneously.
 :::
 
 3. **Main loop**. For each day in `1 ... ndays` do:
@@ -177,3 +177,26 @@ nplot(
   )
 ```
 
+## Exercises
+
+1. *Basic model*. Look for the `ModelSEIRCONN()` and create an Agent-Based model featuring 10,000 agents. Run a simulation with the following characteristics: (a) has a virus with 1 initial case, (b) has a transmission rate of 0.1 with a reproductive number of 2 (so you need to figure out the contact rate), (c) runs for 50 days.
+
+::: {.callout-tip title="Simple ABM calibration"}
+In the case of a simple ABM (based on a fixed contact and transmission rate), we can use the following equation to calibrate our models:
+
+$$
+\mathcal{R}_0 = p_t \times c / p_r \implies c = \mathcal{R}_0 \times p_r / p_t
+$$
+
+Where $c$ is the contact rate, $p_r$ is the recovery rate, and $p_t$ is the transmission rate.
+:::
+
+2. *Multiple runs*. Look at the documentation of `run_multiple()` and (a) create a saver that extracts the outbreak size, (b) execute the model for the same 50 days, and (c) exctract the saved outbreak size and plot the distribution.
+
+3. *A network model*. Using the `ModelSEIR()` function, (a) create a version of the model using a network instead (you can use the small-world network), (b) replicate the `run_multiple()` exercise. and (d) compare the distribution with and without network
+
+::: {.callout-tip title="Calibration of Network Models"}
+Calibrating network-based models is not a simple task. The traditional sense of the basic reproductive number is somewhat misleading in network-based models overestimating the quantity (see @huangEndogenousCompetitionUnderrealized2025). Nonetheless, for the moment, it will still give you a good starting point.
+:::
+
+## References

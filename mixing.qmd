@@ -2,6 +2,18 @@
 title: "SEIR outbreak simulation with mixing and quarantine in Miami"
 ---
 
+::: {.callout-note}
+This example has been adapted from the ongoing work on the FIFA World Cup, InsightNet's ID Cup <https://github.com/EpiForeSITE/idcup>.
+:::
+
+Now, we will build a more complex model using the `ModelSEIRMixingQuarantine()` model. The new model has the following components:
+
+- *Contact Matrix*: Using data from Epistorm [@litvinovaEpistormMixMappingSocial2025], this provides a contact matrix at the group level, indicating the average number of contacts between age groups.
+- *Heterogenous Vaccination*: We can specify vaccination rates to be heterogenous at the group level.
+- *Contact tracing and isolation*: This is built-in feature in the model. Although users could implement their own using R, it is not recommended as the C++ version is highly efficient.
+
+
+
 ## Preparing the environment
 
 ```{r}

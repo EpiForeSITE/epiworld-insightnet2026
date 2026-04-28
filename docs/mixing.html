@@ -163,19 +163,26 @@ div.csl-indent {
 <span class="menu-text">Getting Started</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./model-builder.html"> 
-<span class="menu-text">Model Builder</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link active" href="./mixing.html" aria-current="page"> 
 <span class="menu-text">Full example</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="./idcup.html"> 
-<span class="menu-text">IDCup Measles</span></a>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-more-examples" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">More examples</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more-examples">    
+        <li>
+    <a class="dropdown-item" href="./idcup.html">
+ <span class="dropdown-text">IDCup Measles</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./model-builder.html">
+ <span class="dropdown-text">Model Builder</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item">
     <a class="nav-link" href="https://github.com/EpiForeSITE/epiworld-insightnet2026"> <i class="bi bi-github" role="img">
 </i> 
@@ -232,6 +239,25 @@ div.csl-indent {
 </header>
 
 
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This example has been adapted from the ongoing work on the FIFA World Cup, InsightNet’s ID Cup <a href="https://github.com/EpiForeSITE/idcup" class="uri">https://github.com/EpiForeSITE/idcup</a>.</p>
+</div>
+</div>
+<p>Now, we will build a more complex model using the <code>ModelSEIRMixingQuarantine()</code> model. The new model has the following components:</p>
+<ul>
+<li><em>Contact Matrix</em>: Using data from Epistorm <span class="citation" data-cites="litvinovaEpistormMixMappingSocial2025">(<a href="#ref-litvinovaEpistormMixMappingSocial2025" role="doc-biblioref">Litvinova et al. 2025</a>)</span>, this provides a contact matrix at the group level, indicating the average number of contacts between age groups.</li>
+<li><em>Heterogenous Vaccination</em>: We can specify vaccination rates to be heterogenous at the group level.</li>
+<li><em>Contact tracing and isolation</em>: This is built-in feature in the model. Although users could implement their own using R, it is not recommended as the C++ version is highly efficient.</li>
+</ul>
 <section id="preparing-the-environment" class="level2">
 <h2 class="anchored" data-anchor-id="preparing-the-environment">Preparing the environment</h2>
 <div class="cell">
@@ -358,9 +384,9 @@ Number of entities  : 17
 Days (duration)     : 60 (of 60)
 Number of viruses   : 1
 Last run elapsed t  : 0.00s
-Total elapsed t     : 3.00s (100 runs)
-Last run speed      : 24.31 million agents x day / second
-Average run speed   : 75.84 million agents x day / second
+Total elapsed t     : 4.00s (100 runs)
+Last run speed      : 18.58 million agents x day / second
+Average run speed   : 69.40 million agents x day / second
 Rewiring            : off
 Last seed used      : 1474663894
 
@@ -434,8 +460,8 @@ Transition Probabilities:
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid_from_matrix</span>(tmat) <span class="sc">|&gt;</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-976022649440aac650f6" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-976022649440aac650f6">{"x":{"diagram":"graph TB\n\ts0[Exposed]\n\ts1[Hospitalized]\n\ts2[Infected]\n\ts3[Isolated]\n\ts4[Isolated Recovered]\n\ts5[Quarantined Exposed]\n\ts6[Quarantined Susceptible]\n\ts7[Recovered]\n\ts8[Susceptible]\n\ts0 -->|589.000000| s2\n\ts0 -->|22.000000| s3\n\ts0 -->|164.000000| s5\n\ts1 -->|143.000000| s7\n\ts2 -->|81.000000| s1\n\ts2 -->|339.000000| s3\n\ts2 -->|64.000000| s4\n\ts2 -->|289.000000| s7\n\ts3 -->|79.000000| s1\n\ts3 -->|239.000000| s2\n\ts3 -->|237.000000| s4\n\ts3 -->|53.000000| s7\n\ts4 -->|283.000000| s7\n\ts5 -->|7.000000| s0\n\ts5 -->|5.000000| s2\n\ts5 -->|276.000000| s3\n\ts6 -->|2334.000000| s8\n\ts8 -->|821.000000| s0\n\ts8 -->|145.000000| s5\n\ts8 -->|3316.000000| s6\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-419572abf6397f589742" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-419572abf6397f589742">{"x":{"diagram":"graph TB\n\ts0[Exposed]\n\ts1[Hospitalized]\n\ts2[Infected]\n\ts3[Isolated]\n\ts4[Isolated Recovered]\n\ts5[Quarantined Exposed]\n\ts6[Quarantined Susceptible]\n\ts7[Recovered]\n\ts8[Susceptible]\n\ts0 -->|589.000000| s2\n\ts0 -->|22.000000| s3\n\ts0 -->|164.000000| s5\n\ts1 -->|143.000000| s7\n\ts2 -->|81.000000| s1\n\ts2 -->|339.000000| s3\n\ts2 -->|64.000000| s4\n\ts2 -->|289.000000| s7\n\ts3 -->|79.000000| s1\n\ts3 -->|239.000000| s2\n\ts3 -->|237.000000| s4\n\ts3 -->|53.000000| s7\n\ts4 -->|283.000000| s7\n\ts5 -->|7.000000| s0\n\ts5 -->|5.000000| s2\n\ts5 -->|276.000000| s3\n\ts6 -->|2334.000000| s8\n\ts8 -->|821.000000| s0\n\ts8 -->|145.000000| s5\n\ts8 -->|3316.000000| s6\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
