@@ -13,9 +13,9 @@ website:
       - href: index.qmd
         text: Home
       - href: intro.qmd
-        text: Getting Started
+        text: Introduction
       - href: mixing.qmd
-        text: Full example
+        text: Extended Example
     right: 
       - text: More examples
         menu:
