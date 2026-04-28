@@ -160,18 +160,22 @@ div.csl-indent {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./intro.html"> 
-<span class="menu-text">Introduction</span></a>
+<span class="menu-text">Getting Started</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./model-builder.html"> 
 <span class="menu-text">Model Builder</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./idcup.html" aria-current="page"> 
-<span class="menu-text">Measles Outbreak</span></a>
+    <a class="nav-link" href="./mixing.html"> 
+<span class="menu-text">Full example</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link active" href="./idcup.html" aria-current="page"> 
+<span class="menu-text">IDCup Measles</span></a>
+  </li>  
   <li class="nav-item">
     <a class="nav-link" href="https://github.com/EpiForeSITE/epiworld-insightnet2026"> <i class="bi bi-github" role="img">
 </i> 
@@ -250,7 +254,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>This scenario simulation is a work in progress. We are still reviewing the model, assumptions, and paramters. Please be mindful of this when interpreting the results.</p>
+<p>This scenario simulation is a work in progress. We are still reviewing the model, assumptions, and parameters. Please be mindful of this when interpreting the results.</p>
 </div>
 </div>
 <section id="preparing-the-environment" class="level2">
@@ -261,26 +265,34 @@ Note
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">city =</span> <span class="st">"Miami"</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_pop =</span> <span class="dv">50000</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_pop =</span> <span class="dv">10000</span>,</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">nthreads =</span> <span class="dv">4</span>,</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">8812</span>,</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndays =</span> <span class="dv">60</span>,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsims =</span> <span class="dv">100</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">nsims =</span> <span class="dv">20</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Pulling information about the city and population from the data files. The mixing matrix is based on the EpiStorm <span class="citation" data-cites="litvinovaEpistormMixMappingSocial2025">(<a href="#ref-litvinovaEpistormMixMappingSocial2025" role="doc-biblioref">Litvinova et al. 2025</a>)</span> survey data, which provides age-based contact patterns for various cities. We will use the mixing matrix corresponding to the specified city in <code>params$city</code>. If the city is not found in the available mixing matrices, an error will be raised.</p>
+<p>Pulling information about the city and population from the data files. The age distribution is county-level; for Miami, the data are from Miami-Dade County. The mixing matrix is based on EpiStorm <span class="citation" data-cites="litvinovaEpistormMixMappingSocial2025">(<a href="#ref-litvinovaEpistormMixMappingSocial2025" role="doc-biblioref">Litvinova et al. 2025</a>)</span> survey data, which provides age-based contact patterns. When the data file contains multiple city matrices, we use the matrix corresponding to <code>params$city</code>; otherwise, we use the single matrix included with the workshop materials.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Population matrix</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>census_age <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/census_age.csv"</span>)[city <span class="sc">==</span> params<span class="sc">$</span>city]</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>population <span class="ot">&lt;-</span> <span class="dv">487014</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>population <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/population.csv"</span>)[city <span class="sc">==</span> params<span class="sc">$</span>city, Population]</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Mixing matrix (age-based, from Epistorm survey data)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Mixing matrix (age-based, from EpiStorm survey data)</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>mixing_matrices <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/mixing_matrix.rds"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieving vaccination rate</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>vacc_rate <span class="ot">&lt;-</span> <span class="fl">0.881</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.list</span>(mixing_matrices) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">is.matrix</span>(mixing_matrices)) {</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>params<span class="sc">$</span>city <span class="sc">%in%</span> <span class="fu">names</span>(mixing_matrices)) {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="fu">sprintf</span>(<span class="st">"No mixing matrix found for %s."</span>, params<span class="sc">$</span>city))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  mixing_matrix <span class="ot">&lt;-</span> mixing_matrices[[params<span class="sc">$</span>city]]</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  mixing_matrix <span class="ot">&lt;-</span> mixing_matrices</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrieving vaccination rate</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>vacc_rate <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"data/mmr.csv"</span>)[city <span class="sc">==</span> params<span class="sc">$</span>city, vacc_rate] <span class="sc">/</span> <span class="dv">100</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The total population in the census data 487014, exceeds the maximum population size (50000). The population will be scaled down to fit within the specified maximum population size.</p>
+<p>The total population in the city data, 487014, exceeds the workshop target population size (10000). The age distribution will be scaled down to keep the live example small.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">min</span>(params<span class="sc">$</span>max_pop, <span class="fu">sum</span>(population))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -291,7 +303,7 @@ Note
 </div>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>calib_scale <span class="ot">&lt;-</span> <span class="fu">calibrate_mixing_model</span>(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">contact_matrix =</span> mixing_matrices,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">contact_matrix =</span> mixing_matrix,</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_rep_number =</span> <span class="dv">15</span>,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">infectious_period_days =</span> <span class="dv">4</span>,</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">transmission_prob =</span> <span class="fl">0.2</span></span>
@@ -301,8 +313,8 @@ Note
 <section id="baseline-scenario" class="level2">
 <h2 class="anchored" data-anchor-id="baseline-scenario">Baseline scenario</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding hospitalization rate for</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># a 10% hospitalization probability</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Finding the hospitalization rate for</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># a 10% hospitalization probability:</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># P(hosp) = hosp_r / (hosp_r + rec_r)</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   =&gt; hosp_r = P(hosp) (hosp_r + rec_r)</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#             = P(hosp) * hosp_r + P(hosp) * rec_r</span></span>
@@ -314,7 +326,7 @@ Note
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">prevalence                   =</span> <span class="dv">1</span>,</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">transmission_rate            =</span> <span class="fl">0.2</span>,</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">vax_efficacy                 =</span> <span class="fl">0.97</span>,</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">contact_matrix               =</span> mixing_matrices <span class="sc">*</span> calib_scale,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">contact_matrix               =</span> mixing_matrix <span class="sc">*</span> calib_scale,</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">hospitalization_rate         =</span> h_rate,</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">hospitalization_period       =</span> <span class="dv">7</span>,</span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Intervention parameter</span></span>
@@ -354,7 +366,7 @@ Note
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">get_tool</span>(<span class="dv">0</span>) <span class="sc">|&gt;</span></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_distribution_tool</span>(dist_fun)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>For the initial cases, we will use the expected number of active cases based on the reported cases and the sampling approach described above. We will distribute these initial cases randomly across the population.</p>
+<p>For the initial cases, we will use 2 active cases and distribute them randomly across the population.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_virus</span>(measles_model, <span class="dv">0</span>L) <span class="sc">|&gt;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_distribution_virus</span>(</span>
@@ -364,7 +376,7 @@ Note
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      )</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We will use 2 initial cases in the simulations, distributed randomly across the population. We can now run the simulations.</p>
+<p>We can now run the simulations. The workshop defaults use 20 simulations and a maximum population of 10000 so the example can run quickly during a live session. For a fuller analysis, increase <code>params$nsims</code> and <code>params$max_pop</code>.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>saver <span class="ot">&lt;-</span> <span class="fu">make_saver</span>(<span class="st">"outbreak_size"</span>, <span class="st">"hospitalizations"</span>, <span class="st">"transition"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -377,7 +389,7 @@ Note
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">nthreads =</span> params<span class="sc">$</span>nthreads</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Starting multiple runs (100) using 4 thread(s)
+<pre><code>Starting multiple runs (20) using 4 thread(s)
 _________________________________________________________________________
 _________________________________________________________________________
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</code></pre>
@@ -392,17 +404,17 @@ ________________________________________________________________________________
 SIMULATION STUDY
 
 Name of the model   : Measles with Mixing and Quarantine
-Population size     : 50007
+Population size     : 10009
 Agents' data        : (none)
 Number of entities  : 17
 Days (duration)     : 60 (of 60)
 Number of viruses   : 1
-Last run elapsed t  : 0.00s
-Total elapsed t     : 2.00s (100 runs)
-Last run speed      : 44.64 million agents x day / second
-Average run speed   : 139.04 million agents x day / second
+Last run elapsed t  : 9.00ms
+Total elapsed t     : 75.00ms (20 runs)
+Last run speed      : 65.08 million agents x day / second
+Average run speed   : 158.51 million agents x day / second
 Rewiring            : off
-Last seed used      : 1474663894
+Last seed used      : 432123442
 
 Global events:
  - Quarantine process (runs daily)
@@ -432,31 +444,31 @@ Model parameters:
  - Vax efficacy                    : 0.9700
 
 Distribution of the population at time 60:
-  - ( 0) Susceptible             : 50005 -&gt; 50003
-  - ( 1) Latent                  :     2 -&gt; 0
-  - ( 2) Prodromal               :     0 -&gt; 0
-  - ( 3) Rash                    :     0 -&gt; 0
+  - ( 0) Susceptible             : 10007 -&gt; 9980
+  - ( 1) Latent                  :     2 -&gt; 6
+  - ( 2) Prodromal               :     0 -&gt; 2
+  - ( 3) Rash                    :     0 -&gt; 2
   - ( 4) Isolated                :     0 -&gt; 0
-  - ( 5) Isolated Recovered      :     0 -&gt; 1
-  - ( 6) Quarantined Latent      :     0 -&gt; 0
-  - ( 7) Quarantined Susceptible :     0 -&gt; 0
+  - ( 5) Isolated Recovered      :     0 -&gt; 2
+  - ( 6) Quarantined Latent      :     0 -&gt; 3
+  - ( 7) Quarantined Susceptible :     0 -&gt; 7
   - ( 8) Quarantined Prodromal   :     0 -&gt; 0
   - ( 9) Quarantined Recovered   :     0 -&gt; 0
   - (10) Hospitalized            :     0 -&gt; 0
-  - (11) Recovered               :     0 -&gt; 3
+  - (11) Recovered               :     0 -&gt; 7
 
 Transition Probabilities:
  - Susceptible              1.00  0.00     -     -     -     -     -  0.00     -     -     -     -
- - Latent                      -  0.75  0.19     -     -     -  0.06     -     -     -     -     -
- - Prodromal                   -     -  0.25  0.75     -     -     -     -     -     -     -     -
- - Rash                        -     -     -     -  0.67     -     -     -     -     -     -  0.33
- - Isolated                    -     -     -     -  0.50  0.33     -     -     -     -     -  0.17
- - Isolated Recovered          -     -     -     -     -  0.98     -     -     -     -     -  0.02
- - Quarantined Latent          -     -     -     -     -     -  0.86     -  0.14     -     -     -
- - Quarantined Susceptible  0.07     -     -     -     -     -     -  0.93     -     -     -     -
+ - Latent                      -  0.85  0.10     -     -     -  0.04     -  0.01     -     -     -
+ - Prodromal                   -     -  0.74  0.26     -     -     -     -     -     -     -     -
+ - Rash                        -     -     -  0.40     -  0.40     -     -     -     -  0.10  0.10
+ - Isolated                    -     -     -     -  0.50  0.50     -     -     -     -     -     -
+ - Isolated Recovered          -     -     -     -     -  0.91     -     -     -     -     -  0.09
+ - Quarantined Latent          -     -  0.04     -     -     -  0.93     -  0.04     -     -     -
+ - Quarantined Susceptible  0.03     -     -     -     -     -     -  0.97     -     -     -     -
  - Quarantined Prodromal       -     -     -     -  0.50     -     -     -  0.50     -     -     -
  - Quarantined Recovered       -     -     -     -     -     -     -     -     -     -     -     -
- - Hospitalized                -     -     -     -     -     -     -     -     -     -     -     -
+ - Hospitalized                -     -     -     -     -     -     -     -     -     -     -  1.00
  - Recovered                   -     -     -     -     -     -     -     -     -     -     -  1.00</code></pre>
 </div>
 </div>
@@ -481,24 +493,24 @@ Transition Probabilities:
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Preprocessing</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>transition</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       sim_num  date               from                 to counts
-         &lt;int&gt; &lt;int&gt;             &lt;char&gt;             &lt;char&gt;  &lt;int&gt;
-    1:       1     0        Susceptible        Susceptible  50005
-    2:       1     0        Susceptible             Latent      2
-    3:       1     1        Susceptible        Susceptible  50005
-    4:       1     1             Latent             Latent      2
-    5:       1     2        Susceptible        Susceptible  50005
-   ---                                                           
-39894:     100    59 Isolated Recovered Isolated Recovered      2
-39895:     100    59          Recovered          Recovered      1
-39896:     100    60        Susceptible        Susceptible  50004
-39897:     100    60 Isolated Recovered Isolated Recovered      2
-39898:     100    60          Recovered          Recovered      1</code></pre>
+<pre><code>      sim_num  date                    from                      to counts
+        &lt;int&gt; &lt;int&gt;                  &lt;char&gt;                  &lt;char&gt;  &lt;int&gt;
+   1:       1     0             Susceptible             Susceptible  10007
+   2:       1     0             Susceptible                  Latent      2
+   3:       1     1             Susceptible             Susceptible  10007
+   4:       1     1                  Latent                  Latent      1
+   5:       1     1                  Latent               Prodromal      1
+  ---                                                                     
+6965:      20    60      Isolated Recovered               Recovered      2
+6966:      20    60      Quarantined Latent      Quarantined Latent      2
+6967:      20    60 Quarantined Susceptible Quarantined Susceptible     24
+6968:      20    60   Quarantined Prodromal   Quarantined Prodromal      1
+6969:      20    60               Recovered               Recovered     14</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To get a starting point</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>tmat <span class="ot">&lt;-</span> <span class="fu">get_transition_probability</span>(measles_model) <span class="sc">*</span> <span class="dv">0</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Collapsing the dat</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Collapsing the data</span></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>t_totals <span class="ot">&lt;-</span> transition[, .(<span class="at">total =</span> <span class="fu">sum</span>(counts)), by <span class="ot">=</span> .(from, to)]</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>tmat[</span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>(t_totals[, .(from, to)])</span>
@@ -507,15 +519,15 @@ Transition Probabilities:
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid_from_matrix</span>(tmat) <span class="sc">|&gt;</span> </span>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-e5f50c6c69513378e93e" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-e5f50c6c69513378e93e">{"x":{"diagram":"graph TB\n\ts0[Hospitalized]\n\ts1[Isolated]\n\ts2[Isolated Recovered]\n\ts3[Latent]\n\ts4[Prodromal]\n\ts5[Quarantined Latent]\n\ts6[Quarantined Prodromal]\n\ts7[Quarantined Recovered]\n\ts8[Quarantined Susceptible]\n\ts9[Rash]\n\ts10[Recovered]\n\ts11[Susceptible]\n\ts0 -->|157.000000| s10\n\ts1 -->|83.000000| s0\n\ts1 -->|693.000000| s2\n\ts1 -->|363.000000| s9\n\ts1 -->|212.000000| s10\n\ts2 -->|1021.000000| s10\n\ts3 -->|2185.000000| s4\n\ts3 -->|922.000000| s5\n\ts3 -->|76.000000| s6\n\ts4 -->|27.000000| s1\n\ts4 -->|89.000000| s6\n\ts4 -->|1838.000000| s9\n\ts5 -->|138.000000| s3\n\ts5 -->|9.000000| s4\n\ts5 -->|519.000000| s6\n\ts6 -->|520.000000| s1\n\ts6 -->|73.000000| s4\n\ts8 -->|2635.000000| s11\n\ts9 -->|125.000000| s0\n\ts9 -->|921.000000| s1\n\ts9 -->|538.000000| s2\n\ts9 -->|477.000000| s10\n\ts11 -->|4160.000000| s3\n\ts11 -->|3.000000| s5\n\ts11 -->|4650.000000| s8\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-01c496561980810fcb7d" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-01c496561980810fcb7d">{"x":{"diagram":"graph TB\n\ts0[Hospitalized]\n\ts1[Isolated]\n\ts2[Isolated Recovered]\n\ts3[Latent]\n\ts4[Prodromal]\n\ts5[Quarantined Latent]\n\ts6[Quarantined Prodromal]\n\ts7[Quarantined Recovered]\n\ts8[Quarantined Susceptible]\n\ts9[Rash]\n\ts10[Recovered]\n\ts11[Susceptible]\n\ts0 -->|23.000000| s10\n\ts1 -->|15.000000| s0\n\ts1 -->|72.000000| s2\n\ts1 -->|52.000000| s9\n\ts1 -->|32.000000| s10\n\ts2 -->|108.000000| s10\n\ts3 -->|287.000000| s4\n\ts3 -->|99.000000| s5\n\ts3 -->|12.000000| s6\n\ts4 -->|5.000000| s1\n\ts4 -->|17.000000| s6\n\ts4 -->|239.000000| s9\n\ts5 -->|19.000000| s3\n\ts5 -->|2.000000| s4\n\ts5 -->|45.000000| s6\n\ts6 -->|56.000000| s1\n\ts6 -->|9.000000| s4\n\ts8 -->|282.000000| s11\n\ts9 -->|14.000000| s0\n\ts9 -->|126.000000| s1\n\ts9 -->|67.000000| s2\n\ts9 -->|66.000000| s10\n\ts11 -->|512.000000| s3\n\ts11 -->|532.000000| s8\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
 <section id="outbreak-size" class="level3">
 <h3 class="anchored" data-anchor-id="outbreak-size">Outbreak size</h3>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregating to get the final</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting outbreak size over time</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ggplot2<span class="sc">::</span><span class="fu">ggplot</span>(</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  outbreak_size,</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  ggplot2<span class="sc">::</span><span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> outbreak_size)</span>
@@ -544,7 +556,7 @@ Transition Probabilities:
 </div>
 </div>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregating to get the final</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregating the final day</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>final_outbreak <span class="ot">&lt;-</span> outbreak_size[date <span class="sc">==</span> <span class="fu">max</span>(date)]</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>median_outbreak_size <span class="ot">&lt;-</span> <span class="fu">median</span>(final_outbreak<span class="sc">$</span>outbreak_size)</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -584,7 +596,7 @@ Transition Probabilities:
 </section>
 <section id="session-info" class="level2">
 <h2 class="anchored" data-anchor-id="session-info">Session info</h2>
-<p>This document was generated using the <code>{measles}</code> R package version 0.3.1.0 and the <code>{epiworldR}</code> package version 0.15.0.0 on 2026-04-27. We used R version 4.5.3, running on Linux with x86_64 architecture.</p>
+<p>This document was generated using the <code>{measles}</code> R package version 0.3.1.0 and the <code>{epiworldR}</code> package version 0.15.1.0 on 2026-04-28. We used R version 4.5.3, running on Linux with x86_64 architecture.</p>
 </section>
 <section id="references" class="level2">
 

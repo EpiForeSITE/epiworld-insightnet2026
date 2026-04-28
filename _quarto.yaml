@@ -13,12 +13,14 @@ website:
       - href: index.qmd
         text: Home
       - href: intro.qmd
-        text: Introduction
+        text: Getting Started
       - href: model-builder.qmd
         text: Model Builder
-      - href: idcup.qmd
-        text: Measles Outbreak
+      - href: mixing.qmd
+        text: Full example
     right: 
+      - href: idcup.qmd
+        text: IDCup Measles
       - href: https://github.com/EpiForeSITE/epiworld-insightnet2026
         text: "GitHub"
         icon: github

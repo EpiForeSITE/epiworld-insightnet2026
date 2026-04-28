@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="George Vega Yon">
-<meta name="dcterms.date" content="2026-04-27">
+<meta name="dcterms.date" content="2026-04-28">
 
 <title>Building models with the model builder – epiworldR at InsightNet 2026</title>
 <style>
@@ -60,26 +60,7 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -162,18 +143,22 @@ div.csl-indent {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./intro.html"> 
-<span class="menu-text">Introduction</span></a>
+<span class="menu-text">Getting Started</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./model-builder.html" aria-current="page"> 
 <span class="menu-text">Model Builder</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./idcup.html"> 
-<span class="menu-text">Measles Outbreak</span></a>
+    <a class="nav-link" href="./mixing.html"> 
+<span class="menu-text">Full example</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./idcup.html"> 
+<span class="menu-text">IDCup Measles</span></a>
+  </li>  
   <li class="nav-item">
     <a class="nav-link" href="https://github.com/EpiForeSITE/epiworld-insightnet2026"> <i class="bi bi-github" role="img">
 </i> 
@@ -225,7 +210,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 27, 2026</p>
+      <p class="date">April 28, 2026</p>
     </div>
   </div>
   
@@ -345,8 +330,8 @@ Agents' data        : (none)
 Number of entities  : 0
 Days (duration)     : 100 (of 100)
 Number of viruses   : 1
-Last run elapsed t  : 25.00ms
-Last run speed      : 19.64 million agents x day / second
+Last run elapsed t  : 24.00ms
+Last run speed      : 20.56 million agents x day / second
 Rewiring            : off
 Last seed used      : 1912
 
@@ -387,8 +372,8 @@ Transition Probabilities:
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid</span>(sir_builder, <span class="at">allow_self_transitions =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-d541538565bb051f33b9" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-d541538565bb051f33b9">{"x":{"diagram":"graph TB\n\ts0[Infected]\n\ts1[Recovered]\n\ts2[Susceptible]\n\ts0 -->|0.859872| s0\n\ts0 -->|0.140128| s1\n\ts1 -->|1.000000| s1\n\ts2 -->|0.004235| s0\n\ts2 -->|0.995765| s2\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-f2137bff785d40d372ca" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-f2137bff785d40d372ca">{"x":{"diagram":"graph TB\n\ts0[Infected]\n\ts1[Recovered]\n\ts2[Susceptible]\n\ts0 -->|0.859872| s0\n\ts0 -->|0.140128| s1\n\ts1 -->|1.000000| s1\n\ts2 -->|0.004235| s0\n\ts2 -->|0.995765| s2\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>This is the full model builder pattern in its simplest form: create an empty model, add parameters, add states with their update rules, attach a virus, add a population, and run.</p>
@@ -486,8 +471,8 @@ Agents' data        : (none)
 Number of entities  : 0
 Days (duration)     : 100 (of 100)
 Number of viruses   : 1
-Last run elapsed t  : 7.00ms
-Last run speed      : 62.68 million agents x day / second
+Last run elapsed t  : 6.00ms
+Last run speed      : 80.80 million agents x day / second
 Rewiring            : off
 Last seed used      : 1912
 
@@ -534,15 +519,15 @@ Transition Probabilities:
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid</span>(seird_builder, <span class="at">allow_self_transitions =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-a5dc439d8c9a74aa0aaf" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-a5dc439d8c9a74aa0aaf">{"x":{"diagram":"graph TB\n\ts0[Deceased]\n\ts1[Exposed]\n\ts2[Infected]\n\ts3[Recovered]\n\ts4[Susceptible]\n\ts0 -->|1.000000| s0\n\ts1 -->|0.812500| s1\n\ts1 -->|0.187500| s2\n\ts2 -->|0.007011| s0\n\ts2 -->|0.850860| s2\n\ts2 -->|0.142129| s3\n\ts3 -->|1.000000| s3\n\ts4 -->|0.000486| s1\n\ts4 -->|0.999514| s4\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-eec4e2b93b501670287b" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-eec4e2b93b501670287b">{"x":{"diagram":"graph TB\n\ts0[Deceased]\n\ts1[Exposed]\n\ts2[Infected]\n\ts3[Recovered]\n\ts4[Susceptible]\n\ts0 -->|1.000000| s0\n\ts1 -->|0.812500| s1\n\ts1 -->|0.187500| s2\n\ts2 -->|0.007011| s0\n\ts2 -->|0.850860| s2\n\ts2 -->|0.142129| s3\n\ts3 -->|1.000000| s3\n\ts4 -->|0.000486| s1\n\ts4 -->|0.999514| s4\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>This reproduces the main SEIRD compartment logic using the model builder functions. The key step is the infected-state update:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>update_i</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;pointer: 0x5555579907f0&gt;
+<pre><code>&lt;pointer: 0x55555ade9ab0&gt;
 attr(,"class")
 [1] "epiworld_update_fun"</code></pre>
 </div>
@@ -551,7 +536,7 @@ attr(,"class")
 </section>
 <section id="a-note-about-calibration" class="level2">
 <h2 class="anchored" data-anchor-id="a-note-about-calibration">A note about calibration</h2>
-<p>Calibrating ABMs is not straight forward, especially in the case of network-based models (see for instance <span class="citation" data-cites="huangEndogenousCompetitionUnderrealized2025">Huang et al. (<a href="#ref-huangEndogenousCompetitionUnderrealized2025" role="doc-biblioref">2025</a>)</span>). Nonetheless, we can still have a nice starting point anchored in theory. One way to approach this is using the basic reproductive number <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ℛ</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\mathcal{R}_0</annotation></semantics></math>; based on how we parametrize models in <code>epiworld</code>, we can write:</p>
+<p>Calibrating ABMs is not straight forward, especially in the case of network-based models (see for instance <span class="citation" data-cites="huangEndogenousCompetitionUnderrealized2025">(<a href="#ref-huangEndogenousCompetitionUnderrealized2025" role="doc-biblioref"><strong>huangEndogenousCompetitionUnderrealized2025?</strong></a>)</span>). Nonetheless, we can still have a nice starting point anchored in theory. One way to approach this is using the basic reproductive number <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ℛ</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\mathcal{R}_0</annotation></semantics></math>; based on how we parametrize models in <code>epiworld</code>, we can write:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ℛ</mi><mn>0</mn></msub><mo>=</mo><mi>c</mi><mo>×</mo><msub><mi>p</mi><mi>t</mi></msub><mo>×</mo><msubsup><mi>p</mi><mi>r</mi><mrow><mi>−</mi><mn>1</mn></mrow></msubsup><mo>⟹</mo><mi>c</mi><mo>=</mo><msub><mi>ℛ</mi><mn>0</mn></msub><mo>×</mo><msub><mi>p</mi><mi>r</mi></msub><mo>×</mo><msubsup><mi>p</mi><mi>t</mi><mrow><mi>−</mi><mn>1</mn></mrow></msubsup></mrow><annotation encoding="application/x-tex">
 \mathcal{R}_0 = c\times p_t \times p_r^{-1} \implies c = \mathcal{R}_0 \times p_r \times p_t^{-1}
 </annotation></semantics></math></p>
@@ -566,20 +551,15 @@ attr(,"class")
 <pre><code>[1] 28.57143</code></pre>
 </div>
 </div>
-<p>which, in our network based model, means setting the mean degree to be approximately 28.57. As a practical recommendation, I would suggest the user to set a higher contact/degree rate and modify the transmission rate if possible (which would require re-arranging the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ℛ</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\mathcal{R}_0</annotation></semantics></math> equation); otherwise, as the contact rate reduces, the local competition and local depletion of susceptibles effects described in <span class="citation" data-cites="huangEndogenousCompetitionUnderrealized2025">Huang et al. (<a href="#ref-huangEndogenousCompetitionUnderrealized2025" role="doc-biblioref">2025</a>)</span> become apparent. As the contact rate increases, both mixing and network-based models start behaving as compartmental models, which may be desirable in many cases.</p>
+<p>which, in our network based model, means setting the mean degree to be approximately 28.57. As a practical recommendation, I would suggest the user to set a higher contact/degree rate and modify the transmission rate if possible (which would require re-arranging the <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ℛ</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\mathcal{R}_0</annotation></semantics></math> equation); otherwise, as the contact rate reduces, the local competition and local depletion of susceptibles effects described in <span class="citation" data-cites="huangEndogenousCompetitionUnderrealized2025">(<a href="#ref-huangEndogenousCompetitionUnderrealized2025" role="doc-biblioref"><strong>huangEndogenousCompetitionUnderrealized2025?</strong></a>)</span> become apparent. As the contact rate increases, both mixing and network-based models start behaving as compartmental models, which may be desirable in many cases.</p>
 </section>
 <section id="references" class="level2">
-
-
+<h2 class="anchored" data-anchor-id="references">References</h2>
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-huangEndogenousCompetitionUnderrealized2025" class="csl-entry" role="listitem">
-Huang, Peng, Zack W. Almquist, and Carter T. Butts. 2025. <span>“Endogenous Competition and the Underrealized Reproduction of Infectious Diseases.”</span> <em>Proceedings of the National Academy of Sciences</em> 122 (23): e2502676122. <a href="https://doi.org/10.1073/pnas.2502676122">https://doi.org/10.1073/pnas.2502676122</a>.
-</div>
-</div></section></div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

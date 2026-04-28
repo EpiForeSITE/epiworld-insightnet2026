@@ -1,5 +1,5 @@
 ---
-title: Introduction
+title: Getting Started
 ---
 
 `epiworld` is an advanced, highly flexible and performant Agent-Based Modeling (ABM) engine with a focus on epidemiological models. The core of the tool has been implemented in C++--available at <https://github.com/UofUEpiBio/epiworld>--and it has [R](https://github.com/UofUEpiBio/epiworldR) and [Python](https://github.com/UofUEpiBio/epiworldpy) wrappers.
@@ -74,7 +74,7 @@ Because `epiworld` has been designed to be fast, we generally run multiple simul
 
 ## Example: with SEIR model
 
-In this example, we will create a simple SEIR model using a Stochastic-Block Model for generating a random network (included in `epiworldR`)
+In this example, we will create a simple SEIR model using a Stochastic-Block Model for generating a random network (included in `epiworldR`). This creates a network with, in this case, two groups of 500 agents each, with a higher contact rate within groups than between groups. 
 
 ### Running the simulation
 
@@ -97,9 +97,44 @@ agents_sbm(
 )
 
 # Running the simulation
-run(sir, ndays = 100, seed = 1912)
-sir
+run(sir, ndays = 365, seed = 1912)
 ```
+
+After the simulation takes place, we can use the methods `summary()` and `plot()` to get a first look at the results:
+
+```{r}
+#| label: summary
+summary(sir)
+```
+
+The `summary()` method prints the following information:
+
+- The model metadata, including, name, population, duration, and elapsed time.
+- Information about events (which we don't have yet), viruses (single), and tools (none).
+- Model parameters (which can be modified via `set_param()`).
+- Distribution of the agents from time 0 to `ndays` (365 in this case), and
+- The transition matrix, where each entry indicates the trasition probability from one state to another.
+
+The `plot()` method provides a simple view of the outbreak too
+
+```{r}
+#| label: simple-plot
+plot(sir)
+```
+
+But we can get much more detailed information! Mostly using the following functions:
+
+- `get_active_cases()`
+- `get_generation_time()`
+- `get_hist_total()`
+- `get_hist_transition_matrix()`
+- `get_hospitalizations()`
+- `get_outbreak_size()`
+- `get_reproductive_number()`
+- `get_transition_probability()`
+- `get_transmissions()`
+
+Although, most names are self-explainatory, we will try them out later.
 
 ### Visualizing the results
 
@@ -141,3 +176,4 @@ nplot(
   edge.color       = "darkgray"
   )
 ```
+

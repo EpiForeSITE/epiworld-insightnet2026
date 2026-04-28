@@ -1,0 +1,243 @@
+---
+title: "SEIR outbreak simulation with mixing and quarantine in Miami"
+---
+
+## Preparing the environment
+
+```{r}
+#| label: loading-libraries
+#| warning: false
+#| message: false
+library(epiworldR)
+library(measles)
+library(data.table)
+library(ggplot2)
+
+params <- list(
+  city     = "Miami",
+  max_pop  = 50000,
+  nthreads = 4,
+  seed     = 8812,
+  ndays    = 60,
+  nsims    = 100
+)
+```
+
+Pulling information about the city and population from the data files. The mixing matrix is based on the EpiStorm [@litvinovaEpistormMixMappingSocial2025] survey data, which provides age-based contact patterns for various cities. We will use the mixing matrix corresponding to the specified city in `params$city`.
+
+```{r}
+#| label: loading-data
+# Population matrix
+census_age <- fread("data/census_age.csv")[city == params$city]
+population <- 487014
+
+# Mixing matrix (age-based, from Epistorm survey data)
+mixing_matrices <- readRDS("data/mixing_matrix.rds")
+```
+
+The total population in the census data `r prettyNum(population)`, exceeds the maximum population size (`r prettyNum(params$max_pop)`). The population will be scaled down to fit within the specified maximum population size.
+
+```{r}
+#| label: adjusting-population
+N <- min(params$max_pop, sum(population))
+
+census_age[, total := ceiling(total / sum(total) * N)]
+N <- sum(census_age$total)
+```
+
+We calibrate the contact matrix to a target basic reproduction number of 2.5, consistent with a moderately transmissible respiratory pathogen (e.g., pandemic influenza). The infectious period is set to 7 days and the per-contact transmission probability to 0.1.
+
+```{r}
+#| label: calibrating-mixing
+calib_scale <- calibrate_mixing_model(
+  contact_matrix         = mixing_matrices,
+  target_rep_number      = 2.5,
+  infectious_period_days = 7,
+  transmission_prob      = 0.1
+)
+```
+
+## Baseline scenario
+
+```{r}
+#| label: creating-model
+
+# Hospitalization rate such that P(hosp) = 20%
+# P(hosp) = hosp_r / (hosp_r + rec_r)
+#   => hosp_r = P(hosp) * rec_r / (1 - P(hosp))
+h_rate <- 0.2 * (1 / 7) / (1 - 0.2)
+
+seir_model <- ModelSEIRMixingQuarantine(
+  name                         = "Respiratory pathogen",
+  n                            = N,
+  prevalence                   = 1 / N,
+  transmission_rate            = 0.1,
+  incubation_days              = 5,
+  recovery_rate                = 1 / 7,
+  contact_matrix               = mixing_matrices * calib_scale,
+  hospitalization_rate         = h_rate,
+  hospitalization_period       = 7,
+  # Detection and intervention parameters
+  days_undetected              = 3,
+  quarantine_period            = 14,
+  quarantine_willingness       = 0.8,
+  isolation_willingness        = 0.6,
+  isolation_period             = 7,
+  # Contact tracing parameters
+  contact_tracing_success_rate = 0.7,
+  contact_tracing_days_prior   = 4
+)
+```
+
+```{r}
+#| label: adding-entities
+# Adding age-group entities to the model
+add_entities_from_dataframe(
+  model        = seir_model,
+  entities     = census_age,
+  col_name     = "age_group",
+  col_number   = "total",
+  as_proportion = FALSE
+)
+```
+
+We will use a single initial infectious case seeded randomly in the population.
+
+```{r}
+#| label: distribute-initial-cases
+get_virus(seir_model, 0L) |>
+  set_distribution_virus(
+    distfun = distribute_virus_randomly(
+      prevalence    = 1,
+      as_proportion = FALSE
+    )
+  )
+```
+
+We can now run the simulations.
+
+```{r}
+#| label: running-simulations
+saver <- make_saver("outbreak_size", "hospitalizations", "transition")
+
+seir_model |>
+  run_multiple(
+    ndays    = params$ndays,
+    nsims    = params$nsims,
+    seed     = params$seed,
+    saver    = saver,
+    nthreads = params$nthreads
+  )
+```
+
+We can check the results of the simulations by summarizing the model:
+
+```{r}
+#| label: checking-simulations
+summary(seir_model)
+```
+
+## Extracting and plotting the results
+
+```{r}
+#| label: extracting-results
+ans <- seir_model |>
+  run_multiple_get_results(
+    freader = data.table::fread
+  )
+
+outbreak_size    <- ans$outbreak_size    |> as.data.table()
+hospitalizations <- ans$hospitalizations |> as.data.table()
+transition       <- ans$transition       |> as.data.table()
+```
+
+### Transition
+
+```{r}
+#| label: plotting-transition
+tmat <- get_transition_probability(seir_model) * 0
+
+t_totals <- transition[, .(total = sum(counts)), by = .(from, to)]
+tmat[as.matrix(t_totals[, .(from, to)])] <- t_totals$total
+
+draw_mermaid_from_matrix(tmat) |>
+  plot()
+```
+
+### Outbreak size
+
+```{r}
+#| label: plotting-outbreak-size1
+ggplot(
+  outbreak_size,
+  aes(x = date, y = outbreak_size)
+) +
+  geom_point(
+    color = "steelblue",
+    alpha = 0.2,
+    size  = 1.5
+  ) +
+  labs(
+    title    = paste("SEIR outbreak size in", params$city),
+    subtitle = sprintf(
+      "Mixing model with census data (%i simulations)",
+      params$nsims
+    ),
+    x = "Day",
+    y = "Cases"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: plotting-outbreak-size2
+final_outbreak      <- outbreak_size[date == max(date)]
+median_outbreak_size <- median(final_outbreak$outbreak_size)
+
+ggplot(final_outbreak, aes(x = outbreak_size)) +
+  geom_histogram(fill = "steelblue", color = "white") +
+  labs(
+    title    = sprintf(
+      "SEIR outbreak size in %s (median: %.0f)",
+      params$city,
+      median_outbreak_size
+    ),
+    subtitle = sprintf(
+      "Mixing model with census data (%i simulations)",
+      params$nsims
+    ),
+    x = "Final outbreak size",
+    y = "Count"
+  ) +
+  theme_minimal()
+```
+
+### Hospitalizations
+
+```{r}
+#| label: plotting-hospitalizations
+hosp_daily <- hospitalizations[, .(Total = sum(count)), by = .(sim_num)]
+
+ggplot(hosp_daily, aes(x = Total)) +
+  geom_histogram() +
+  labs(
+    title    = paste(
+      "Daily hospitalizations in SEIR outbreak in",
+      params$city
+    ),
+    subtitle = sprintf(
+      "SEIR mixing model (%i simulations)",
+      params$nsims
+    ),
+    y = "Frequency",
+    x = "Total Hospitalizations"
+  ) +
+  theme_minimal()
+```
+
+
+## Session info
+
+This document was generated using the `{epiworldR}` package version `r packageVersion("epiworldR")` on `r Sys.Date()`. We used R version `r getRversion()`, running on `r Sys.info()[['sysname']]` with `r Sys.info()[['machine']]` architecture.
+
+## References

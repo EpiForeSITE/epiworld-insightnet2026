@@ -7,7 +7,7 @@ The original version of this document is part of the ID Cup project and can be f
 :::
 
 ::: {.callout-caution title="Work in progress"}
-This scenario simulation is a work in progress. We are still reviewing the model, assumptions, and paramters. Please be mindful of this when interpreting the results.
+This scenario simulation is a work in progress. We are still reviewing the model, assumptions, and parameters. Please be mindful of this when interpreting the results.
 :::
 
 ## Preparing the environment
@@ -21,30 +21,38 @@ library(data.table)
 
 params <- list(
   city = "Miami",
-  max_pop = 50000,
+  max_pop = 10000,
   nthreads = 4,
   seed = 8812,
   ndays = 60,
-  nsims = 100
+  nsims = 20
   )
 ```
 
-Pulling information about the city and population from the data files. The mixing matrix is based on the EpiStorm [@litvinovaEpistormMixMappingSocial2025] survey data, which provides age-based contact patterns for various cities. We will use the mixing matrix corresponding to the specified city in `params$city`. If the city is not found in the available mixing matrices, an error will be raised.
+Pulling information about the city and population from the data files. The age distribution is county-level; for Miami, the data are from Miami-Dade County. The mixing matrix is based on EpiStorm [@litvinovaEpistormMixMappingSocial2025] survey data, which provides age-based contact patterns. When the data file contains multiple city matrices, we use the matrix corresponding to `params$city`; otherwise, we use the single matrix included with the workshop materials.
 
 ```{r}
 #| label: loading-data
 # Population matrix
 census_age <- fread("data/census_age.csv")[city == params$city]
-population <- 487014
+population <- fread("data/population.csv")[city == params$city, Population]
 
-# Mixing matrix (age-based, from Epistorm survey data)
+# Mixing matrix (age-based, from EpiStorm survey data)
 mixing_matrices <- readRDS("data/mixing_matrix.rds")
+if (is.list(mixing_matrices) && !is.matrix(mixing_matrices)) {
+  if (!params$city %in% names(mixing_matrices)) {
+    stop(sprintf("No mixing matrix found for %s.", params$city))
+  }
+  mixing_matrix <- mixing_matrices[[params$city]]
+} else {
+  mixing_matrix <- mixing_matrices
+}
 
 # Retrieving vaccination rate
-vacc_rate <- 0.881
+vacc_rate <- fread("data/mmr.csv")[city == params$city, vacc_rate] / 100
 ```
 
-The total population in the census data `r prettyNum(population)`, exceeds the maximum population size (`r prettyNum(params$max_pop)`). The population will be scaled down to fit within the specified maximum population size.
+The total population in the city data, `r prettyNum(population)`, exceeds the workshop target population size (`r prettyNum(params$max_pop)`). The age distribution will be scaled down to keep the live example small.
 
 ```{r}
 #| label: adjusting-population
@@ -59,7 +67,7 @@ N <- sum(census_age$total)
 ```{r}
 #| label: calibrating-mixing
 calib_scale <- calibrate_mixing_model(
-  contact_matrix = mixing_matrices,
+  contact_matrix = mixing_matrix,
   target_rep_number = 15,
   infectious_period_days = 4,
   transmission_prob = 0.2
@@ -71,8 +79,8 @@ calib_scale <- calibrate_mixing_model(
 ```{r}
 #| label: creating-model
 
-# Finding hospitalization rate for
-# a 10% hospitalization probability
+# Finding the hospitalization rate for
+# a 10% hospitalization probability:
 # P(hosp) = hosp_r / (hosp_r + rec_r)
 #   => hosp_r = P(hosp) (hosp_r + rec_r)
 #             = P(hosp) * hosp_r + P(hosp) * rec_r
@@ -84,7 +92,7 @@ measles_model <- ModelMeaslesMixing(
   prevalence                   = 1,
   transmission_rate            = 0.2,
   vax_efficacy                 = 0.97,
-  contact_matrix               = mixing_matrices * calib_scale,
+  contact_matrix               = mixing_matrix * calib_scale,
   hospitalization_rate         = h_rate,
   hospitalization_period       = 7,
   # Intervention parameter
@@ -131,7 +139,7 @@ measles_model |>
   set_distribution_tool(dist_fun)
 ```
 
-For the initial cases, we will use the expected number of active cases based on the reported cases and the sampling approach described above. We will distribute these initial cases randomly across the population.
+For the initial cases, we will use 2 active cases and distribute them randomly across the population.
 
 ```{r}
 #| label: distribute-initial-cases
@@ -144,7 +152,7 @@ get_virus(measles_model, 0L) |>
   )
 ```
 
-We will use 2 initial cases in the simulations, distributed randomly across the population. We can now run the simulations.
+We can now run the simulations. The workshop defaults use `r params$nsims` simulations and a maximum population of `r prettyNum(params$max_pop)` so the example can run quickly during a live session. For a fuller analysis, increase `params$nsims` and `params$max_pop`.
 
 ```{r}
 #| label: running-simulations
@@ -191,7 +199,7 @@ transition
 # To get a starting point
 tmat <- get_transition_probability(measles_model) * 0
 
-# Collapsing the dat
+# Collapsing the data
 t_totals <- transition[, .(total = sum(counts)), by = .(from, to)]
 tmat[
   as.matrix(t_totals[, .(from, to)])
@@ -205,7 +213,7 @@ draw_mermaid_from_matrix(tmat) |>
 
 ```{r}
 #| label: plotting-outbreak-size1
-# Aggregating to get the final
+# Plotting outbreak size over time
 ggplot2::ggplot(
   outbreak_size,
   ggplot2::aes(x = date, y = outbreak_size)
@@ -230,7 +238,7 @@ ggplot2::ggplot(
 
 ```{r}
 #| label: plotting-outbreak-size2
-# Aggregating to get the final
+# Aggregating the final day
 final_outbreak <- outbreak_size[date == max(date)]
 median_outbreak_size <- median(final_outbreak$outbreak_size)
 

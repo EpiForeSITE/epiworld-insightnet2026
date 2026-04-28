@@ -62,13 +62,13 @@ Key features of `{epiworldR}` include:
 -   Fast simulation with an average of 30 million agents/model-step/second
 -   Multi-disease models (e.g., competing pathogens, multiple rumors, etc.)
 -   Mutating pathogens
--   User-defined interventions (events, tools, politices, etc.) that chagne model behavior while it's running
+-   User-defined interventions (events, tools, policies, etc.) that change model behavior while it is running
 -   Adapting transmission and recovery rates based on comorbidities
 -   Parallel computing out-of-the-box
--   Likelihood-Free Markhov chain Monte Carlo (LFMCMC)
+-   Likelihood-free Markov chain Monte Carlo (LFMCMC)
 -   Models with an arbitrary number of compartments/states beyond SIR/SEIR.
 
-Additionally, while `{epiworldR}` was built for models of disease transmission, the `{epiworld}` framework is general enough to build models for any type of diffusion process (covered in Part 2a of this workshop).
+Additionally, while `{epiworldR}` was built for models of disease transmission, the `{epiworld}` framework is general enough to build models for many diffusion processes beyond infectious disease.
 
 ## Requirements
 
