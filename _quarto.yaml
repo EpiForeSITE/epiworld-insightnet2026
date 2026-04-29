@@ -14,8 +14,10 @@ website:
         text: Home
       - href: intro.qmd
         text: Introduction
+      - href: seir.qmd
+        text: SEIR model
       - href: mixing.qmd
-        text: Extended Example
+        text: Mixing model
     right: 
       - text: More examples
         menu:

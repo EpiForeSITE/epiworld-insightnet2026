@@ -163,8 +163,12 @@ div.csl-indent {
 <span class="menu-text">Introduction</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./seir.html"> 
+<span class="menu-text">SEIR model</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link active" href="./mixing.html" aria-current="page"> 
-<span class="menu-text">Extended Example</span></a>
+<span class="menu-text">Mixing model</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -385,8 +389,8 @@ Days (duration)     : 60 (of 60)
 Number of viruses   : 1
 Last run elapsed t  : 0.00s
 Total elapsed t     : 3.00s (100 runs)
-Last run speed      : 23.81 million agents x day / second
-Average run speed   : 89.81 million agents x day / second
+Last run speed      : 21.42 million agents x day / second
+Average run speed   : 83.91 million agents x day / second
 Rewiring            : off
 Last seed used      : 1474663894
 
@@ -460,8 +464,8 @@ Transition Probabilities:
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid_from_matrix</span>(tmat) <span class="sc">|&gt;</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-7ea0bb1640e86f4e1ca5" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-7ea0bb1640e86f4e1ca5">{"x":{"diagram":"graph TB\n\ts0[Exposed]\n\ts1[Hospitalized]\n\ts2[Infected]\n\ts3[Isolated]\n\ts4[Isolated Recovered]\n\ts5[Quarantined Exposed]\n\ts6[Quarantined Susceptible]\n\ts7[Recovered]\n\ts8[Susceptible]\n\ts0 -->|589.000000| s2\n\ts0 -->|22.000000| s3\n\ts0 -->|164.000000| s5\n\ts1 -->|143.000000| s7\n\ts2 -->|81.000000| s1\n\ts2 -->|339.000000| s3\n\ts2 -->|64.000000| s4\n\ts2 -->|289.000000| s7\n\ts3 -->|79.000000| s1\n\ts3 -->|239.000000| s2\n\ts3 -->|237.000000| s4\n\ts3 -->|53.000000| s7\n\ts4 -->|283.000000| s7\n\ts5 -->|7.000000| s0\n\ts5 -->|5.000000| s2\n\ts5 -->|276.000000| s3\n\ts6 -->|2334.000000| s8\n\ts8 -->|821.000000| s0\n\ts8 -->|145.000000| s5\n\ts8 -->|3316.000000| s6\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-1eaa49f79dac379a954e" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-1eaa49f79dac379a954e">{"x":{"diagram":"graph TB\n\ts0[Exposed]\n\ts1[Hospitalized]\n\ts2[Infected]\n\ts3[Isolated]\n\ts4[Isolated Recovered]\n\ts5[Quarantined Exposed]\n\ts6[Quarantined Susceptible]\n\ts7[Recovered]\n\ts8[Susceptible]\n\ts0 -->|589.000000| s2\n\ts0 -->|22.000000| s3\n\ts0 -->|164.000000| s5\n\ts1 -->|143.000000| s7\n\ts2 -->|81.000000| s1\n\ts2 -->|339.000000| s3\n\ts2 -->|64.000000| s4\n\ts2 -->|289.000000| s7\n\ts3 -->|79.000000| s1\n\ts3 -->|239.000000| s2\n\ts3 -->|237.000000| s4\n\ts3 -->|53.000000| s7\n\ts4 -->|283.000000| s7\n\ts5 -->|7.000000| s0\n\ts5 -->|5.000000| s2\n\ts5 -->|276.000000| s3\n\ts6 -->|2334.000000| s8\n\ts8 -->|821.000000| s0\n\ts8 -->|145.000000| s5\n\ts8 -->|3316.000000| s6\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
