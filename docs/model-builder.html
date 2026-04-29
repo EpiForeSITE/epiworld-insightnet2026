@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="George Vega Yon">
-<meta name="dcterms.date" content="2026-04-28">
+<meta name="dcterms.date" content="2026-04-29">
 
 <title>Building models with the model builder – epiworldR at InsightNet 2026</title>
 <style>
@@ -236,7 +236,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 28, 2026</p>
+      <p class="date">April 29, 2026</p>
     </div>
   </div>
   
@@ -356,8 +356,8 @@ Agents' data        : (none)
 Number of entities  : 0
 Days (duration)     : 100 (of 100)
 Number of viruses   : 1
-Last run elapsed t  : 30.00ms
-Last run speed      : 16.60 million agents x day / second
+Last run elapsed t  : 17.00ms
+Last run speed      : 27.94 million agents x day / second
 Rewiring            : off
 Last seed used      : 1912
 
@@ -398,8 +398,8 @@ Transition Probabilities:
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid</span>(sir_builder, <span class="at">allow_self_transitions =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-3db1290346626299c7ae" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-3db1290346626299c7ae">{"x":{"diagram":"graph TB\n\ts0[Infected]\n\ts1[Recovered]\n\ts2[Susceptible]\n\ts0 -->|0.859872| s0\n\ts0 -->|0.140128| s1\n\ts1 -->|1.000000| s1\n\ts2 -->|0.004235| s0\n\ts2 -->|0.995765| s2\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-ed44c7c5ccfec9b91a6a" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-ed44c7c5ccfec9b91a6a">{"x":{"diagram":"graph TB\n\ts0[Infected]\n\ts1[Recovered]\n\ts2[Susceptible]\n\ts0 -->|0.859872| s0\n\ts0 -->|0.140128| s1\n\ts1 -->|1.000000| s1\n\ts2 -->|0.004235| s0\n\ts2 -->|0.995765| s2\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>This is the full model builder pattern in its simplest form: create an empty model, add parameters, add states with their update rules, attach a virus, add a population, and run.</p>
@@ -497,8 +497,8 @@ Agents' data        : (none)
 Number of entities  : 0
 Days (duration)     : 100 (of 100)
 Number of viruses   : 1
-Last run elapsed t  : 8.00ms
-Last run speed      : 58.43 million agents x day / second
+Last run elapsed t  : 5.00ms
+Last run speed      : 85.31 million agents x day / second
 Rewiring            : off
 Last seed used      : 1912
 
@@ -545,15 +545,15 @@ Transition Probabilities:
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid</span>(seird_builder, <span class="at">allow_self_transitions =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-6496a0e75dcb4c715cc0" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-6496a0e75dcb4c715cc0">{"x":{"diagram":"graph TB\n\ts0[Deceased]\n\ts1[Exposed]\n\ts2[Infected]\n\ts3[Recovered]\n\ts4[Susceptible]\n\ts0 -->|1.000000| s0\n\ts1 -->|0.812500| s1\n\ts1 -->|0.187500| s2\n\ts2 -->|0.007011| s0\n\ts2 -->|0.850860| s2\n\ts2 -->|0.142129| s3\n\ts3 -->|1.000000| s3\n\ts4 -->|0.000486| s1\n\ts4 -->|0.999514| s4\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-aac822e6e35e6db64a21" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-aac822e6e35e6db64a21">{"x":{"diagram":"graph TB\n\ts0[Deceased]\n\ts1[Exposed]\n\ts2[Infected]\n\ts3[Recovered]\n\ts4[Susceptible]\n\ts0 -->|1.000000| s0\n\ts1 -->|0.812500| s1\n\ts1 -->|0.187500| s2\n\ts2 -->|0.007011| s0\n\ts2 -->|0.850860| s2\n\ts2 -->|0.142129| s3\n\ts3 -->|1.000000| s3\n\ts4 -->|0.000486| s1\n\ts4 -->|0.999514| s4\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>This reproduces the main SEIRD compartment logic using the model builder functions. The key step is the infected-state update:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>update_i</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>&lt;pointer: 0x55555c36e410&gt;
+<pre><code>&lt;pointer: 0x55555bf2a3c0&gt;
 attr(,"class")
 [1] "epiworld_update_fun"</code></pre>
 </div>
