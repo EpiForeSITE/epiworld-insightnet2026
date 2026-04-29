@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>SEIR outbreak simulation with mixing and quarantine in Miami – epiworldR at InsightNet 2026</title>
+<title>Part 3: Mixing Models – epiworldR at InsightNet 2026</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -159,16 +159,16 @@ div.csl-indent {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./intro.html"> 
-<span class="menu-text">Introduction</span></a>
+    <a class="nav-link" href="./part_1.html"> 
+<span class="menu-text">Part 1: Introduction</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./seir.html"> 
-<span class="menu-text">SEIR model</span></a>
+    <a class="nav-link" href="./part_2_networks.html"> 
+<span class="menu-text">Part 2: Network Models</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./mixing.html" aria-current="page"> 
-<span class="menu-text">Mixing model</span></a>
+    <a class="nav-link active" href="./part_3_mixing.html" aria-current="page"> 
+<span class="menu-text">Part 3: Mixing Models</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -178,11 +178,11 @@ div.csl-indent {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more-examples">    
         <li>
-    <a class="dropdown-item" href="./idcup.html">
+    <a class="dropdown-item" href="./bonus/idcup.html">
  <span class="dropdown-text">IDCup Measles</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./model-builder.html">
+    <a class="dropdown-item" href="./bonus/model-builder.html">
  <span class="dropdown-text">Model Builder</span></a>
   </li>  
     </ul>
@@ -216,6 +216,8 @@ div.csl-indent {
   <li><a href="#outbreak-size" id="toc-outbreak-size" class="nav-link" data-scroll-target="#outbreak-size">Outbreak size</a></li>
   <li><a href="#hospitalizations" id="toc-hospitalizations" class="nav-link" data-scroll-target="#hospitalizations">Hospitalizations</a></li>
   </ul></li>
+  <li><a href="#intervention-reducing-contact-rates-by-75" id="toc-intervention-reducing-contact-rates-by-75" class="nav-link" data-scroll-target="#intervention-reducing-contact-rates-by-75">Intervention: reducing contact rates by 75%</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
   <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
@@ -226,7 +228,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">SEIR outbreak simulation with mixing and quarantine in Miami</h1>
+<h1 class="title">Part 3: Mixing Models</h1>
 </div>
 
 
@@ -272,7 +274,7 @@ Note
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>params <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">city     =</span> <span class="st">"Miami"</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_pop  =</span> <span class="dv">50000</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">max_pop  =</span> <span class="dv">10000</span>,</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">nthreads =</span> <span class="dv">4</span>,</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed     =</span> <span class="dv">8812</span>,</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">ndays    =</span> <span class="dv">60</span>,</span>
@@ -288,7 +290,7 @@ Note
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Mixing matrix (age-based, from Epistorm survey data)</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>mixing_matrices <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"data/mixing_matrix.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The total population in the census data 487014, exceeds the maximum population size (50000). The population will be scaled down to fit within the specified maximum population size.</p>
+<p>The total population in the census data 487014, exceeds the maximum population size (10000). The population will be scaled down to fit within the specified maximum population size.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">min</span>(params<span class="sc">$</span>max_pop, <span class="fu">sum</span>(population))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -299,7 +301,7 @@ Note
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>calib_scale <span class="ot">&lt;-</span> <span class="fu">calibrate_mixing_model</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">contact_matrix         =</span> mixing_matrices,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_rep_number      =</span> <span class="fl">2.5</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">target_rep_number      =</span> <span class="dv">2</span>,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">infectious_period_days =</span> <span class="dv">7</span>,</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">transmission_prob      =</span> <span class="fl">0.1</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -316,7 +318,7 @@ Note
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>seir_model <span class="ot">&lt;-</span> <span class="fu">ModelSEIRMixingQuarantine</span>(</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">name                         =</span> <span class="st">"Respiratory pathogen"</span>,</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">n                            =</span> N,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prevalence                   =</span> <span class="dv">1</span> <span class="sc">/</span> N,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prevalence                   =</span> <span class="dv">10</span> <span class="sc">/</span> N,</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">transmission_rate            =</span> <span class="fl">0.1</span>,</span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">incubation_days              =</span> <span class="dv">5</span>,</span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">recovery_rate                =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">7</span>,</span>
@@ -325,12 +327,12 @@ Note
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">hospitalization_period       =</span> <span class="dv">7</span>,</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Detection and intervention parameters</span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">days_undetected              =</span> <span class="dv">3</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">quarantine_period            =</span> <span class="dv">14</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">quarantine_period            =</span> <span class="dv">7</span>,</span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">quarantine_willingness       =</span> <span class="fl">0.8</span>,</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">isolation_willingness        =</span> <span class="fl">0.6</span>,</span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">isolation_period             =</span> <span class="dv">7</span>,</span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Contact tracing parameters</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">contact_tracing_success_rate =</span> <span class="fl">0.7</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">contact_tracing_success_rate =</span> <span class="fl">0.5</span>,</span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">contact_tracing_days_prior   =</span> <span class="dv">4</span></span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -349,7 +351,7 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">get_virus</span>(seir_model, <span class="dv">0</span>L) <span class="sc">|&gt;</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_distribution_virus</span>(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">distfun =</span> <span class="fu">distribute_virus_randomly</span>(</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">prevalence    =</span> <span class="dv">1</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">prevalence    =</span> <span class="dv">10</span>,</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">as_proportion =</span> <span class="cn">FALSE</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -364,10 +366,10 @@ Note
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">nsims    =</span> params<span class="sc">$</span>nsims,</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed     =</span> params<span class="sc">$</span>seed,</span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">saver    =</span> saver,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">nthreads =</span> params<span class="sc">$</span>nthreads</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">nthreads =</span> <span class="dv">1</span> <span class="co"># params$nthreads</span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Starting multiple runs (100) using 4 thread(s)
+<pre><code>Starting multiple runs (100) using 1 thread(s)
 _________________________________________________________________________
 _________________________________________________________________________
 ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</code></pre>
@@ -382,17 +384,17 @@ ________________________________________________________________________________
 SIMULATION STUDY
 
 Name of the model   : SEIR with Mixing and Quarantine
-Population size     : 50007
+Population size     : 10009
 Agents' data        : (none)
 Number of entities  : 17
 Days (duration)     : 60 (of 60)
 Number of viruses   : 1
 Last run elapsed t  : 0.00s
-Total elapsed t     : 3.00s (100 runs)
-Last run speed      : 21.42 million agents x day / second
-Average run speed   : 83.91 million agents x day / second
+Total elapsed t     : 5.00s (100 runs)
+Last run speed      : 10.84 million agents x day / second
+Average run speed   : 11.92 million agents x day / second
 Rewiring            : off
-Last seed used      : 1474663894
+Last seed used      : 628712762
 
 Global events:
  - Update infected individuals (runs daily)
@@ -406,7 +408,7 @@ Tool(s):
 Model parameters:
  - Avg. Incubation days         : 5.0000
  - Contact tracing days prior   : 4.0000
- - Contact tracing success rate : 0.7000
+ - Contact tracing success rate : 0.5000
  - Days undetected              : 3.0000
  - Hospitalization period       : 7.0000
  - Hospitalization rate         : 0.0357
@@ -414,29 +416,29 @@ Model parameters:
  - Isolation willingness        : 0.6000
  - Prob. Recovery               : 0.1429
  - Prob. Transmission           : 0.1000
- - Quarantine period            : 14.0000
+ - Quarantine period            : 7.0000
  - Quarantine willingness       : 0.8000
 
 Distribution of the population at time 60:
-  - (0) Susceptible             : 50006 -&gt; 49976
-  - (1) Exposed                 :     1 -&gt; 1
-  - (2) Infected                :     0 -&gt; 0
-  - (3) Isolated                :     0 -&gt; 0
-  - (4) Quarantined Susceptible :     0 -&gt; 13
-  - (5) Quarantined Exposed     :     0 -&gt; 0
-  - (6) Isolated Recovered      :     0 -&gt; 0
-  - (7) Hospitalized            :     0 -&gt; 0
-  - (8) Recovered               :     0 -&gt; 17
+  - (0) Susceptible             :  9999 -&gt; 9906
+  - (1) Exposed                 :    10 -&gt; 3
+  - (2) Infected                :     0 -&gt; 3
+  - (3) Isolated                :     0 -&gt; 5
+  - (4) Quarantined Susceptible :     0 -&gt; 30
+  - (5) Quarantined Exposed     :     0 -&gt; 3
+  - (6) Isolated Recovered      :     0 -&gt; 2
+  - (7) Hospitalized            :     0 -&gt; 5
+  - (8) Recovered               :     0 -&gt; 52
 
 Transition Probabilities:
  - Susceptible              1.00  0.00     -     -  0.00  0.00     -     -     -
- - Exposed                     -  0.81  0.15  0.01     -  0.03     -     -     -
- - Infected                    -     -  0.66  0.10     -     -  0.05  0.02  0.17
- - Isolated                    -     -  0.10  0.68     -     -  0.16  0.03  0.03
- - Quarantined Susceptible  0.06     -     -     -  0.94     -     -     -     -
- - Quarantined Exposed         -  0.05     -  0.25     -  0.70     -     -     -
- - Isolated Recovered          -     -     -     -     -     -  0.74     -  0.26
- - Hospitalized                -     -     -     -     -     -     -  0.82  0.18
+ - Exposed                     -  0.78  0.17     -     -  0.05     -     -     -
+ - Infected                    -     -  0.73  0.09     -     -  0.02  0.06  0.10
+ - Isolated                    -     -  0.09  0.71     -     -  0.13  0.05  0.02
+ - Quarantined Susceptible  0.13     -     -     -  0.87     -     -     -     -
+ - Quarantined Exposed         -  0.05     -  0.21     -  0.74     -     -     -
+ - Isolated Recovered          -     -     -     -     -     -  0.70     -  0.30
+ - Hospitalized                -     -     -     -     -     -     -  0.89  0.11
  - Recovered                   -     -     -     -     -     -     -     -  1.00</code></pre>
 </div>
 </div>
@@ -464,8 +466,8 @@ Transition Probabilities:
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">draw_mermaid_from_matrix</span>(tmat) <span class="sc">|&gt;</span></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
-<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-1eaa49f79dac379a954e" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-1eaa49f79dac379a954e">{"x":{"diagram":"graph TB\n\ts0[Exposed]\n\ts1[Hospitalized]\n\ts2[Infected]\n\ts3[Isolated]\n\ts4[Isolated Recovered]\n\ts5[Quarantined Exposed]\n\ts6[Quarantined Susceptible]\n\ts7[Recovered]\n\ts8[Susceptible]\n\ts0 -->|589.000000| s2\n\ts0 -->|22.000000| s3\n\ts0 -->|164.000000| s5\n\ts1 -->|143.000000| s7\n\ts2 -->|81.000000| s1\n\ts2 -->|339.000000| s3\n\ts2 -->|64.000000| s4\n\ts2 -->|289.000000| s7\n\ts3 -->|79.000000| s1\n\ts3 -->|239.000000| s2\n\ts3 -->|237.000000| s4\n\ts3 -->|53.000000| s7\n\ts4 -->|283.000000| s7\n\ts5 -->|7.000000| s0\n\ts5 -->|5.000000| s2\n\ts5 -->|276.000000| s3\n\ts6 -->|2334.000000| s8\n\ts8 -->|821.000000| s0\n\ts8 -->|145.000000| s5\n\ts8 -->|3316.000000| s6\n"},"evals":[],"jsHooks":[]}</script>
+<div class="DiagrammeR html-widget html-fill-item" id="htmlwidget-3b2b22c7cec9f439a4db" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-3b2b22c7cec9f439a4db">{"x":{"diagram":"graph TB\n\ts0[Exposed]\n\ts1[Hospitalized]\n\ts2[Infected]\n\ts3[Isolated]\n\ts4[Isolated Recovered]\n\ts5[Quarantined Exposed]\n\ts6[Quarantined Susceptible]\n\ts7[Recovered]\n\ts8[Susceptible]\n\ts0 -->|5112.000000| s2\n\ts0 -->|116.000000| s3\n\ts0 -->|725.000000| s5\n\ts1 -->|971.000000| s7\n\ts2 -->|724.000000| s1\n\ts2 -->|2715.000000| s3\n\ts2 -->|458.000000| s4\n\ts2 -->|2551.000000| s7\n\ts3 -->|397.000000| s1\n\ts3 -->|1637.000000| s2\n\ts3 -->|1342.000000| s4\n\ts3 -->|254.000000| s7\n\ts4 -->|1657.000000| s7\n\ts5 -->|292.000000| s0\n\ts5 -->|66.000000| s2\n\ts5 -->|1022.000000| s3\n\ts6 -->|14886.000000| s8\n\ts8 -->|6112.000000| s0\n\ts8 -->|775.000000| s5\n\ts8 -->|17116.000000| s6\n"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -494,7 +496,7 @@ Transition Probabilities:
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="mixing_files/figure-html/plotting-outbreak-size1-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="part_3_mixing_files/figure-html/plotting-outbreak-size1-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -525,7 +527,7 @@ Transition Probabilities:
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="mixing_files/figure-html/plotting-outbreak-size2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="part_3_mixing_files/figure-html/plotting-outbreak-size2-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -557,12 +559,121 @@ Transition Probabilities:
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="mixing_files/figure-html/plotting-hospitalizations-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="part_3_mixing_files/figure-html/plotting-hospitalizations-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
+</section>
+<section id="intervention-reducing-contact-rates-by-75" class="level2">
+<h2 class="anchored" data-anchor-id="intervention-reducing-contact-rates-by-75">Intervention: reducing contact rates by 75%</h2>
+<p>Interventions in <code>epiworldR</code> can be applied in various forms. Besides changing the initial conditions, we can change the situation midway through the simulation using global events. Global events are functions that can arbitrarily modify the model at user-defined points in time. Some of the common applications are:</p>
+<ul>
+<li><code>globalevent_set_params()</code>: Change model parameters (e.g., transmission rate, recovery rate, etc.) at a specific day.</li>
+<li><code>globalevent_tool()</code>: Distribute a tool (e.g., vaccine, antiviral, etc.) to the population at a specific day.</li>
+<li><code>globalevent_fun()</code>: Apply an arbitrary R function to the model at a specific day. This is the most flexible option, as it allows users to implement any intervention that can be coded in R. However, it is also the least efficient option, as it requires running the simulation in a single thread.</li>
+</ul>
+<div class="callout callout-style-default callout-warning callout-titled" title="Thread safety">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Warning</span>Thread safety
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Unfortunately, the R programming language is not thread safe. In other words, when we use the <code>globalevent_fun()</code> caller, which essentially wraps an R function, we need to run the <code>run_multiple()</code> function using a single thread.</p>
+</div>
+</div>
+<p>Global events can, as I mentioned, modify arbitrary parts of the program. In this case, we will use a global event to reduce the contact rates by 75% starting from day 40. This is equivalent to reducing the contact matrix by a factor of 4. To do so, we need two steps:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 1: Create a R function that receives a model</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>reduce_contact_fourth <span class="ot">&lt;-</span> <span class="cf">function</span>(m) {</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  cmat <span class="ot">&lt;-</span> epiworldR<span class="sc">::</span><span class="fu">get_contact_matrix</span>(m)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  epiworldR<span class="sc">::</span><span class="fu">set_contact_matrix</span>(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    m, cmat <span class="sc">/</span> <span class="dv">4</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">as_backup =</span> <span class="cn">FALSE</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Step 2: Register (add) the event to the model</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">add_globalevent</span>(</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">model =</span> seir_model,</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">event =</span> <span class="fu">globalevent_fun</span>(</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun  =</span> reduce_contact_fourth,</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Reduce contact"</span>,</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">day  =</span> <span class="dv">40</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The <code>as_backup = FALSE</code> tells <code>epiworldR</code> to automatically restore the original contact matrix when restarting the simulation. Let’s see how the model changes with this new event.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>saver2 <span class="ot">&lt;-</span> <span class="fu">make_saver</span>(<span class="st">"outbreak_size"</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>seir_model <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_multiple</span>(</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">ndays    =</span> params<span class="sc">$</span>ndays,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">nsims    =</span> params<span class="sc">$</span>nsims,</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">seed     =</span> params<span class="sc">$</span>seed,</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">saver    =</span> saver2,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">nthreads =</span> <span class="dv">1</span> <span class="co"># params$nthreads</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Starting multiple runs (100) using 1 thread(s)
+_________________________________________________________________________
+_________________________________________________________________________
+||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Extracting</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ans2 <span class="ot">&lt;-</span> seir_model <span class="sc">|&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">run_multiple_get_results</span>(</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">freader =</span> data.table<span class="sc">::</span>fread</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>outbreak_size2 <span class="ot">&lt;-</span> ans2<span class="sc">$</span>outbreak_size <span class="sc">|&gt;</span> <span class="fu">as.data.table</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Now we can plot the result:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  outbreak_size2,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> date, <span class="at">y =</span> outbreak_size)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">alpha =</span> <span class="fl">0.2</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">size  =</span> <span class="fl">1.5</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">title    =</span> <span class="fu">paste</span>(<span class="st">"SEIR outbreak size in"</span>, params<span class="sc">$</span>city),</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="fu">sprintf</span>(</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Mixing model with census data (%i simulations)"</span>,</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>      params<span class="sc">$</span>nsims</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Includes intervention reducing contact rates"</span>,</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Day"</span>,</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Cases"</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="part_3_mixing_files/figure-html/plotting-outbreak-size3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="exercises" class="level2">
+<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<ol type="1">
+<li><p>Instead of using the <code>glovalevent_fun()</code>, let’s start a vaccination campaign in which we vaccinate 20% of the population on two separate days. Try to implement this intervention.</p></li>
+<li><p>Using the parameter intervention, see if doubling the quarantine duration from its current value by day 30 has an effect.</p></li>
+<li><p>(bonus) One advanced feature of <code>epiworldR</code> is the ability to add custom states and functions. Modify the infectious state to transition to recovered and deceased state (new state). Take a look at the model builder documentation.</p></li>
+</ol>
 </section>
 <section id="session-info" class="level2">
 <h2 class="anchored" data-anchor-id="session-info">Session info</h2>

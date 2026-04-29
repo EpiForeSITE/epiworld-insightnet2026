@@ -1,5 +1,5 @@
 ---
-title: "SEIR outbreak simulation with mixing and quarantine in Miami"
+title: "Part 3: Mixing Models"
 ---
 
 ::: {.callout-note}
@@ -11,7 +11,6 @@ Now, we will build a more complex model using the `ModelSEIRMixingQuarantine()` 
 - *Contact Matrix*: Using data from Epistorm [@litvinovaEpistormMixMappingSocial2025], this provides a contact matrix at the group level, indicating the average number of contacts between age groups.
 - *Heterogenous Vaccination*: We can specify vaccination rates to be heterogenous at the group level.
 - *Contact tracing and isolation*: This is built-in feature in the model. Although users could implement their own using R, it is not recommended as the C++ version is highly efficient.
-
 
 
 ## Preparing the environment
@@ -27,7 +26,7 @@ library(ggplot2)
 
 params <- list(
   city     = "Miami",
-  max_pop  = 50000,
+  max_pop  = 10000,
   nthreads = 4,
   seed     = 8812,
   ndays    = 60,
@@ -57,13 +56,15 @@ census_age[, total := ceiling(total / sum(total) * N)]
 N <- sum(census_age$total)
 ```
 
+
+
 We calibrate the contact matrix to a target basic reproduction number of 2.5, consistent with a moderately transmissible respiratory pathogen (e.g., pandemic influenza). The infectious period is set to 7 days and the per-contact transmission probability to 0.1.
 
 ```{r}
 #| label: calibrating-mixing
 calib_scale <- calibrate_mixing_model(
   contact_matrix         = mixing_matrices,
-  target_rep_number      = 2.5,
+  target_rep_number      = 2,
   infectious_period_days = 7,
   transmission_prob      = 0.1
 )
@@ -82,7 +83,7 @@ h_rate <- 0.2 * (1 / 7) / (1 - 0.2)
 seir_model <- ModelSEIRMixingQuarantine(
   name                         = "Respiratory pathogen",
   n                            = N,
-  prevalence                   = 1 / N,
+  prevalence                   = 10 / N,
   transmission_rate            = 0.1,
   incubation_days              = 5,
   recovery_rate                = 1 / 7,
@@ -91,12 +92,12 @@ seir_model <- ModelSEIRMixingQuarantine(
   hospitalization_period       = 7,
   # Detection and intervention parameters
   days_undetected              = 3,
-  quarantine_period            = 14,
+  quarantine_period            = 7,
   quarantine_willingness       = 0.8,
   isolation_willingness        = 0.6,
   isolation_period             = 7,
   # Contact tracing parameters
-  contact_tracing_success_rate = 0.7,
+  contact_tracing_success_rate = 0.5,
   contact_tracing_days_prior   = 4
 )
 ```
@@ -120,7 +121,7 @@ We will use a single initial infectious case seeded randomly in the population.
 get_virus(seir_model, 0L) |>
   set_distribution_virus(
     distfun = distribute_virus_randomly(
-      prevalence    = 1,
+      prevalence    = 10,
       as_proportion = FALSE
     )
   )
@@ -138,7 +139,7 @@ seir_model |>
     nsims    = params$nsims,
     seed     = params$seed,
     saver    = saver,
-    nthreads = params$nthreads
+    nthreads = 1 # params$nthreads
   )
 ```
 
@@ -247,6 +248,101 @@ ggplot(hosp_daily, aes(x = Total)) +
   theme_minimal()
 ```
 
+## Intervention: reducing contact rates by 75%
+
+Interventions in `epiworldR` can be applied in various forms. Besides changing the initial conditions, we can change the situation midway through the simulation using global events. Global events are functions that can arbitrarily modify the model at user-defined points in time. Some of the common applications are:
+
+- `globalevent_set_params()`: Change model parameters (e.g., transmission rate, recovery rate, etc.) at a specific day.
+- `globalevent_tool()`: Distribute a tool (e.g., vaccine, antiviral, etc.) to the population at a specific day.
+- `globalevent_fun()`: Apply an arbitrary R function to the model at a specific day. This is the most flexible option, as it allows users to implement any intervention that can be coded in R. However, it is also the least efficient option, as it requires running the simulation in a single thread.
+
+::: {.callout-warning title="Thread safety"}
+Unfortunately, the R programming language is not thread safe. In other words, when we use the `globalevent_fun()` caller, which essentially wraps an R function, we need to run the `run_multiple()` function using a single thread.
+:::
+
+Global events can, as I mentioned, modify arbitrary parts of the program. In this case, we will use a global event to reduce the contact rates by 75% starting from day 40. This is equivalent to reducing the contact matrix by a factor of 4. To do so, we need two steps:
+
+```{r}
+#| label: adding-intervention
+# Step 1: Create a R function that receives a model
+reduce_contact_fourth <- function(m) {
+
+  cmat <- epiworldR::get_contact_matrix(m)
+  epiworldR::set_contact_matrix(
+    m, cmat / 4,
+    as_backup = FALSE
+  )
+
+}
+
+# Step 2: Register (add) the event to the model
+add_globalevent(
+  model = seir_model,
+  event = globalevent_fun(
+    fun  = reduce_contact_fourth,
+    name = "Reduce contact",
+    day  = 40
+    )
+  )
+```
+
+The `as_backup = FALSE` tells `epiworldR` to automatically restore the original contact matrix when restarting the simulation. Let's see how the model changes with this new event.
+
+```{r}
+#| label: running-simulations2
+saver2 <- make_saver("outbreak_size")
+
+seir_model |>
+  run_multiple(
+    ndays    = params$ndays,
+    nsims    = params$nsims,
+    seed     = params$seed,
+    saver    = saver2,
+    nthreads = 1 # params$nthreads
+  )
+
+## Extracting
+ans2 <- seir_model |>
+  run_multiple_get_results(
+    freader = data.table::fread
+  )
+
+outbreak_size2 <- ans2$outbreak_size |> as.data.table()
+```
+
+Now we can plot the result:
+
+```{r}
+#| label: plotting-outbreak-size3
+ggplot(
+  outbreak_size2,
+  aes(x = date, y = outbreak_size)
+) +
+  geom_point(
+    color = "steelblue",
+    alpha = 0.2,
+    size  = 1.5
+  ) +
+  labs(
+    title    = paste("SEIR outbreak size in", params$city),
+    subtitle = sprintf(
+      "Mixing model with census data (%i simulations)",
+      params$nsims
+    ),
+    caption = "Includes intervention reducing contact rates",
+    x = "Day",
+    y = "Cases"
+  ) +
+  theme_minimal()
+```
+
+## Exercises
+
+1. Instead of using the `glovalevent_fun()`, let's start a vaccination campaign in which we vaccinate 20% of the population on two separate days. Try to implement this intervention.
+
+2. Using the parameter intervention, see if doubling the quarantine duration from its current value by day 30 has an effect.
+
+3. (bonus) One advanced feature of `epiworldR` is the ability to add custom states and functions. Modify the infectious state to transition to recovered and deceased state (new state). Take a look at the model builder documentation.
 
 ## Session info
 

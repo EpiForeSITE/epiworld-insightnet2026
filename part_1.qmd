@@ -1,12 +1,12 @@
 ---
-title: Getting Started
+title: "Part 1: Introduction"
 ---
 
 `epiworld` is an advanced, highly flexible and performant Agent-Based Modeling (ABM) engine with a focus on epidemiological models. The core of the tool has been implemented in C++--available at <https://github.com/UofUEpiBio/epiworld>--and it has [R](https://github.com/UofUEpiBio/epiworldR) and [Python](https://github.com/UofUEpiBio/epiworldpy) wrappers.
 
 ## Architecture
 
-Althought `epiworld` contains a large number of modules and moving parts, the most important ones are the `Model`, `DataBase`, `Queue`, `Event`, `Agent`, `Virus`, `Tool`, and `Entity`.
+Although `epiworld` contains a large number of modules and moving parts, the most important ones are the `Model`, `DataBase`, `Queue`, `Event`, `Agent`, `Virus`, `Tool`, and `Entity`.
 
 ```{mermaid}
 %%| fig-cap: "Main components of `epiworld` and how they are interrelated."
@@ -38,9 +38,9 @@ flowchart TD
   E -->|Modifies| A
 ```
 
-From the figure, we can hihghlight a few things. First, all classes instances live within the `Model` class; `Agents` or `Virus`es outside of the model have no meaning for `epiworld`. Second, the `DataBase` class keeps track of all the revelant information, including **daily counts**, **trasmission events**, **viruses** and **tools**, etc. Third, although `Agent`s can carry a single virus at a time, models can feature multiple viruses simulatenosly[^why-single-virus], models can feature multiple viruses in the same run, *e.g.*, multipe strands of COVID-19. Fourth, agents can feature multiple `Tool`s: a class of object that alters agents' susceptibility, infectiosness, and recovery, *e.g.*, a vaccine.
+From the figure, we can highlight a few things. First, all class instances live within the `Model` class; `Agents` or `Virus`es outside of the model have no meaning for `epiworld`. Second, the `DataBase` class keeps track of all the relevant information, including **daily counts**, **transmission events**, **viruses** and **tools**, etc. Third, although `Agent`s can carry a single virus at a time, models can feature multiple viruses simultaneously[^why-single-virus], models can feature multiple viruses in the same run, *e.g.*, multiple strands of COVID-19. Fourth, agents can feature multiple `Tool`s: a class of object that alters agents' susceptibility, infectiousness, and recovery, *e.g.*, a vaccine.
 
-[^why-single-virus]: At some point in time, `epiworld` supported agents beign infected with multiple viruses at once. Nonetheless, although an interesting feature, it was computationally expensive. Thus, we decided to simplify the tool and feature a single virus per agent.
+[^why-single-virus]: At some point in time, `epiworld` supported agents being infected with multiple viruses at once. Nonetheless, although an interesting feature, it was computationally expensive. Thus, we decided to simplify the tool and feature a single virus per agent.
 
 The library features two types of contact dynamics: network-based interaction and mixing models. In the network based interaction--the fastest models in `epiworld`--transmission takes place through a pre-defined network. In the case of mixing models, agents are organized in `Entity`(ies) which determines group-level interaction. Mixing models bridge ABMs with compartmental models, providing an approximation that does not require specifying a network structure.
 
@@ -62,7 +62,7 @@ The functions `set_virus()`, `add_tool()`, `add_entity()` or `update_state()` ar
 
 3. **Main loop**. For each day in `1 ... ndays` do:
 
-    a. **Queue**: Check if agents is in the queue. If not, skip to the next iteration.
+    a. **Queue**: Check if agents are in the queue. If not, skip to the next iteration.
     b. **Update Agents**If the agent is in the queue, trigger the update function associated to the agent, *e.g.*, `update_susceptible()` if the agent is susceptible, `update_infected()` if the agent is infected, etc.
     c. **Global Events**: Iterate FIFO through global events. This could trigger more updates to agents, viruses, tools, and entities. For example, a global event could be a lockdown that reduces the contact rate of all agents by 50% for 14 days.
     d. **Save changes**: Save the state of the model in the database and increment the day counter.

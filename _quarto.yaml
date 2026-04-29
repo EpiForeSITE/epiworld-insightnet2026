@@ -12,18 +12,15 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: intro.qmd
-        text: Introduction
-      - href: seir.qmd
-        text: SEIR model
-      - href: mixing.qmd
-        text: Mixing model
+      - href: part_1.qmd
+      - href: part_2_networks.qmd
+      - href: part_3_mixing.qmd
     right: 
       - text: More examples
         menu:
-          - href: idcup.qmd
+          - href: bonus/idcup.qmd
             text: IDCup Measles
-          - href: model-builder.qmd
+          - href: bonus/model-builder.qmd
             text: Model Builder
       - href: https://github.com/EpiForeSITE/epiworld-insightnet2026
         text: "GitHub"

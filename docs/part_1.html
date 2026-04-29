@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>SEIR model – epiworldR at InsightNet 2026</title>
+<title>Part 1: Introduction – epiworldR at InsightNet 2026</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -23,61 +23,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -124,6 +70,10 @@ div.csl-indent {
     "search-label": "Search"
   }
 }</script>
+<meta name="mermaid-theme" content="neutral">
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
 
 </head>
@@ -150,16 +100,16 @@ div.csl-indent {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./intro.html"> 
-<span class="menu-text">Introduction</span></a>
+    <a class="nav-link active" href="./part_1.html" aria-current="page"> 
+<span class="menu-text">Part 1: Introduction</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./seir.html" aria-current="page"> 
-<span class="menu-text">SEIR model</span></a>
+    <a class="nav-link" href="./part_2_networks.html"> 
+<span class="menu-text">Part 2: Network Models</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./mixing.html"> 
-<span class="menu-text">Mixing model</span></a>
+    <a class="nav-link" href="./part_3_mixing.html"> 
+<span class="menu-text">Part 3: Mixing Models</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
@@ -169,11 +119,11 @@ div.csl-indent {
     </a>
     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="nav-menu-more-examples">    
         <li>
-    <a class="dropdown-item" href="./idcup.html">
+    <a class="dropdown-item" href="./bonus/idcup.html">
  <span class="dropdown-text">IDCup Measles</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./model-builder.html">
+    <a class="dropdown-item" href="./bonus/model-builder.html">
  <span class="dropdown-text">Model Builder</span></a>
   </li>  
     </ul>
@@ -199,10 +149,8 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#running-the-simulation" id="toc-running-the-simulation" class="nav-link active" data-scroll-target="#running-the-simulation">Running the simulation</a></li>
-  <li><a href="#visualizing-the-results" id="toc-visualizing-the-results" class="nav-link" data-scroll-target="#visualizing-the-results">Visualizing the results</a></li>
-  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  <li><a href="#architecture" id="toc-architecture" class="nav-link active" data-scroll-target="#architecture">Architecture</a></li>
+  <li><a href="#dynamics" id="toc-dynamics" class="nav-link" data-scroll-target="#dynamics">Dynamics</a></li>
   </ul>
 </nav>
     </div>
@@ -211,7 +159,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">SEIR model</h1>
+<h1 class="title">Part 1: Introduction</h1>
 </div>
 
 
@@ -228,216 +176,105 @@ div.csl-indent {
 </header>
 
 
-<p>In this example, we will create a simple SEIR model using a Stochastic-Block Model for generating a random network (included in <code>epiworldR</code>). This creates a network with, in this case, two groups of 500 agents each, with a higher contact rate within groups than between groups.</p>
-<section id="running-the-simulation" class="level3">
-<h3 class="anchored" data-anchor-id="running-the-simulation">Running the simulation</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initializing SIR model with SBM network</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiworldR)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Thank you for using epiworldR! Please consider citing it in your work.
-You can find the citation information by running
-  citation("epiworldR")</code></pre>
-</div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sir <span class="ot">&lt;-</span> <span class="fu">ModelSIR</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">"COVID-19"</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">prevalence =</span> <span class="dv">5</span><span class="sc">/</span><span class="dv">1000</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">transmission_rate =</span> <span class="fl">0.01</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">recovery_rate =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">7</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating the SBM network featuring two groups</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">agents_sbm</span>(</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  sir,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">block_sizes =</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="dv">500</span>),</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">mixing_matrix =</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">20</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Running the simulation</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="fu">run</span>(sir, <span class="at">ndays =</span> <span class="dv">365</span>, <span class="at">seed =</span> <span class="dv">1912</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>_________________________________________________________________________
-Running the model...
-||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||| done.</code></pre>
-</div>
-</div>
-<p>After the simulation takes place, we can use the methods <code>summary()</code> and <code>plot()</code> to get a first look at the results:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sir)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>________________________________________________________________________________
-________________________________________________________________________________
-SIMULATION STUDY
-
-Name of the model   : Susceptible-Infected-Recovered (SIR)
-Population size     : 1000
-Agents' data        : (none)
-Number of entities  : 0
-Days (duration)     : 365 (of 365)
-Number of viruses   : 1
-Last run elapsed t  : 11.00ms
-Last run speed      : 30.89 million agents x day / second
-Rewiring            : off
-Last seed used      : 1912
-
-Global events:
- (none)
-
-Virus(es):
- - COVID-19
-
-Tool(s):
- (none)
-
-Model parameters:
- - Recovery rate     : 0.1429
- - Transmission rate : 0.0100
-
-Distribution of the population at time 365:
-  - (0) Susceptible :  995 -&gt; 350
-  - (1) Infected    :    5 -&gt; 0
-  - (2) Recovered   :    0 -&gt; 650
-
-Transition Probabilities:
- - Susceptible  1.00  0.00     -
- - Infected        -  0.85  0.15
- - Recovered       -     -  1.00</code></pre>
-</div>
-</div>
-<p>The <code>summary()</code> method prints the following information:</p>
-<ul>
-<li>The model metadata, including, name, population, duration, and elapsed time.</li>
-<li>Information about events (which we don’t have yet), viruses (single), and tools (none).</li>
-<li>Model parameters (which can be modified via <code>set_param()</code>).</li>
-<li>Distribution of the agents from time 0 to <code>ndays</code> (365 in this case), and</li>
-<li>The transition matrix, where each entry indicates the trasition probability from one state to another.</li>
-</ul>
-<p>The <code>plot()</code> method provides a simple view of the outbreak too</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sir)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>epiworld</code> is an advanced, highly flexible and performant Agent-Based Modeling (ABM) engine with a focus on epidemiological models. The core of the tool has been implemented in C++–available at <a href="https://github.com/UofUEpiBio/epiworld" class="uri">https://github.com/UofUEpiBio/epiworld</a>–and it has <a href="https://github.com/UofUEpiBio/epiworldR">R</a> and <a href="https://github.com/UofUEpiBio/epiworldpy">Python</a> wrappers.</p>
+<section id="architecture" class="level2">
+<h2 class="anchored" data-anchor-id="architecture">Architecture</h2>
+<p>Although <code>epiworld</code> contains a large number of modules and moving parts, the most important ones are the <code>Model</code>, <code>DataBase</code>, <code>Queue</code>, <code>Event</code>, <code>Agent</code>, <code>Virus</code>, <code>Tool</code>, and <code>Entity</code>.</p>
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
-<figure class="figure">
-<p><img src="seir_files/figure-html/simple-plot-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>But we can get much more detailed information! Mostly using the following functions:</p>
-<ul>
-<li><code>get_active_cases()</code></li>
-<li><code>get_generation_time()</code></li>
-<li><code>get_hist_total()</code></li>
-<li><code>get_hist_transition_matrix()</code></li>
-<li><code>get_hospitalizations()</code></li>
-<li><code>get_outbreak_size()</code></li>
-<li><code>get_reproductive_number()</code></li>
-<li><code>get_transition_probability()</code></li>
-<li><code>get_transmissions()</code></li>
-</ul>
-<p>Although, most names are self-explainatory, we will try them out later.</p>
-</section>
-<section id="visualizing-the-results" class="level3">
-<h3 class="anchored" data-anchor-id="visualizing-the-results">Visualizing the results</h3>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>op <span class="ot">&lt;-</span> <span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_reproductive_number</span>(sir)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_incidence</span>(sir)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
+<p></p><figure class="figure"><p></p>
 <div>
-<figure class="figure">
-<p><img src="seir_files/figure-html/incidence-and-rt-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<pre class="mermaid mermaid-js">flowchart TD
+  subgraph SE[Simulation Engine]
+    M[Model]
+    D[DataBase]
+    Q[Queue]
+    E[Events]
+  end
+
+  M --&gt;|Reads/Writes| D
+  M --&gt;|Optimizes via| Q
+  M --&gt;|Triggers| E
+
+  subgraph In[Instances]
+    A[Agent]
+    V[Virus]
+    T[Tool]
+    En[Entity]
+  end
+
+  A -.-&gt;|"Belongs to&lt;br&gt;(optional)"| En
+  A --&gt;|Carries| V
+  A --&gt;|Uses| T
+
+
+  M --&gt;|Coordinates| A
+  E --&gt;|Modifies| A
+</pre>
+</div>
+<p></p><figcaption> Main components of <code>epiworld</code> and how they are interrelated.</figcaption> </figure><p></p>
 </div>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(op)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>We can even generate the transmission network (which should be clustered). We use the <code>data.table</code> R package for data wrangling and <code>netplot</code> for network visualization:</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(netplot)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(igraph)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Extracting the transmission tree</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>net <span class="ot">&lt;-</span> <span class="fu">get_transmissions</span>(sir) <span class="sc">|&gt;</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.table</span>()</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizing the transmission tree</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>net <span class="ot">&lt;-</span> <span class="fu">graph_from_edgelist</span>(</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">el =</span> <span class="fu">as.matrix</span>(net[source <span class="sc">!=</span> <span class="sc">-</span><span class="dv">1</span>, .(source, target)] <span class="sc">+</span> <span class="dv">1</span>),</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">directed =</span> <span class="cn">TRUE</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">442</span>)</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="fu">nplot</span>(</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  net,</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">edge.line.breaks =</span> <span class="dv">1</span>,</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">layout           =</span> <span class="fu">layout_as_tree</span>(net),</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip.arrows      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip.vertex      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">edge.color       =</span> <span class="st">"darkgray"</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="seir_files/figure-html/network-vis-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
+<p>From the figure, we can highlight a few things. First, all class instances live within the <code>Model</code> class; <code>Agents</code> or <code>Virus</code>es outside of the model have no meaning for <code>epiworld</code>. Second, the <code>DataBase</code> class keeps track of all the relevant information, including <strong>daily counts</strong>, <strong>transmission events</strong>, <strong>viruses</strong> and <strong>tools</strong>, etc. Third, although <code>Agent</code>s can carry a single virus at a time, models can feature multiple viruses simultaneously<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, models can feature multiple viruses in the same run, <em>e.g.</em>, multiple strands of COVID-19. Fourth, agents can feature multiple <code>Tool</code>s: a class of object that alters agents’ susceptibility, infectiousness, and recovery, <em>e.g.</em>, a vaccine.</p>
+<p>The library features two types of contact dynamics: network-based interaction and mixing models. In the network based interaction–the fastest models in <code>epiworld</code>–transmission takes place through a pre-defined network. In the case of mixing models, agents are organized in <code>Entity</code>(ies) which determines group-level interaction. Mixing models bridge ABMs with compartmental models, providing an approximation that does not require specifying a network structure.</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Network vs Mixing models">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Network vs Mixing models
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Although network-based models are faster, they usually assume a known contact network which may not be available. Mixing models provide a nice approximation that essentially integrates-out the uncertainty about network-based models. In principle, the same could be done with network-based models, but, in order to do so, we would need to embed the graph-generating algorithm in the model, which could increase the computational complexity.</p>
 </div>
 </div>
 </section>
-<section id="exercises" class="level2">
-<h2 class="anchored" data-anchor-id="exercises">Exercises</h2>
+<section id="dynamics" class="level2">
+<h2 class="anchored" data-anchor-id="dynamics">Dynamics</h2>
+<p><code>epiworld</code> is a discrete-time ABM, meaning that, instead of handling a queue of updates and events, it collects updates from a single step and applies them at the end of it. For the user, this simply means that changes in the system that were triggered in time <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math> will be reflected in time <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t + 1</annotation></semantics></math>. Each run of epiworld is characterized by the following sequence:</p>
 <ol type="1">
-<li><em>Basic model</em>. Look for the <code>ModelSEIRCONN()</code> and create an Agent-Based model featuring 10,000 agents. Run a simulation with the following characteristics: (a) has a virus with 1 initial case, (b) has a transmission rate of 0.1 with a reproductive number of 2 (so you need to figure out the contact rate), (c) runs for 50 days.</li>
+<li><p><strong>Reset</strong> the model to its initial state: clear the database, reset the agents, and reset the entities.</p></li>
+<li><p><strong>Distribute</strong> agents to entities, viruses to agents, and tools to agents. Each call finalizes with <code>run_events()</code>.</p></li>
 </ol>
-<div class="callout callout-style-default callout-tip callout-titled" title="Simple ABM calibration">
+<div class="callout callout-style-default callout-note callout-titled" title="Locking changes">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Simple ABM calibration
+<span class="screen-reader-only">Note</span>Locking changes
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>In the case of a simple ABM (based on a fixed contact and transmission rate), we can use the following equation to calibrate our models:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ℛ</mi><mn>0</mn></msub><mo>=</mo><msub><mi>p</mi><mi>t</mi></msub><mo>×</mo><mi>c</mi><mi>/</mi><msub><mi>p</mi><mi>r</mi></msub><mo>⟹</mo><mi>c</mi><mo>=</mo><msub><mi>ℛ</mi><mn>0</mn></msub><mo>×</mo><msub><mi>p</mi><mi>r</mi></msub><mi>/</mi><msub><mi>p</mi><mi>t</mi></msub></mrow><annotation encoding="application/x-tex">
-\mathcal{R}_0 = p_t \times c / p_r \implies c = \mathcal{R}_0 \times p_r / p_t
-</annotation></semantics></math></p>
-<p>Where <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math> is the contact rate, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>r</mi></msub><annotation encoding="application/x-tex">p_r</annotation></semantics></math> is the recovery rate, and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>t</mi></msub><annotation encoding="application/x-tex">p_t</annotation></semantics></math> is the transmission rate.</p>
+<p>The functions <code>set_virus()</code>, <code>add_tool()</code>, <code>add_entity()</code> or <code>update_state()</code> are not effective until <code>run_events()</code> is called. Since epiworld is discrete-time, changes must be applied simultaneously.</p>
 </div>
 </div>
-<ol start="2" type="1">
-<li><p><em>Multiple runs</em>. Look at the documentation of <code>run_multiple()</code> and (a) create a saver that extracts the outbreak size, (b) execute the model for the same 50 days, and (c) exctract the saved outbreak size and plot the distribution.</p></li>
-<li><p><em>A network model</em>. Using the <code>ModelSEIR()</code> function, (a) create a version of the model using a network instead (you can use the small-world network), (b) replicate the <code>run_multiple()</code> exercise. and (d) compare the distribution with and without network</p></li>
+<ol start="3" type="1">
+<li><p><strong>Main loop</strong>. For each day in <code>1 ... ndays</code> do:</p>
+<ol type="a">
+<li><strong>Queue</strong>: Check if agents are in the queue. If not, skip to the next iteration.</li>
+<li><strong>Update Agents</strong>If the agent is in the queue, trigger the update function associated to the agent, <em>e.g.</em>, <code>update_susceptible()</code> if the agent is susceptible, <code>update_infected()</code> if the agent is infected, etc.</li>
+<li><strong>Global Events</strong>: Iterate FIFO through global events. This could trigger more updates to agents, viruses, tools, and entities. For example, a global event could be a lockdown that reduces the contact rate of all agents by 50% for 14 days.</li>
+<li><strong>Save changes</strong>: Save the state of the model in the database and increment the day counter.</li>
+</ol></li>
+<li><p><strong>Return</strong>: The simulation ends and the user can retrieve information from it.</p></li>
 </ol>
-<div class="callout callout-style-default callout-tip callout-titled" title="Calibration of Network Models">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-<span class="screen-reader-only">Tip</span>Calibration of Network Models
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Calibrating network-based models is not a simple task. The traditional sense of the basic reproductive number is somewhat misleading in network-based models overestimating the quantity (see <span class="citation" data-cites="huangEndogenousCompetitionUnderrealized2025">Huang et al. (<a href="#ref-huangEndogenousCompetitionUnderrealized2025" role="doc-biblioref">2025</a>)</span>). Nonetheless, for the moment, it will still give you a good starting point.</p>
-</div>
-</div>
-</section>
-<section id="references" class="level2">
-
-
+<p>Because <code>epiworld</code> has been designed to be fast, we generally run multiple simulations, generating a distribution of outcomes instead of single point estimates.</p>
 
 
 </section>
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
-<div id="ref-huangEndogenousCompetitionUnderrealized2025" class="csl-entry" role="listitem">
-Huang, Peng, Zack W. Almquist, and Carter T. Butts. 2025. <span>“Endogenous Competition and the Underrealized Reproduction of Infectious Diseases.”</span> <em>Proceedings of the National Academy of Sciences</em> 122 (23): e2502676122. <a href="https://doi.org/10.1073/pnas.2502676122">https://doi.org/10.1073/pnas.2502676122</a>.
-</div>
-</div></section></div></main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>At some point in time, <code>epiworld</code> supported agents being infected with multiple viruses at once. Nonetheless, although an interesting feature, it was computationally expensive. Thus, we decided to simplify the tool and feature a single virus per agent.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

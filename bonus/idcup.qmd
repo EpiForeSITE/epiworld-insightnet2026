@@ -264,6 +264,7 @@ We can save the results for further analysis.
 
 ```{r}
 #| label: saving-results
+#| eval: false
 fwrite(outbreak_size, sprintf("%s_outbreak_size.csv", params$city))
 fwrite(hospitalizations, sprintf("%s_hospitalizations.csv", params$city))
 ```
